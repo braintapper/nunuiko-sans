@@ -103,11 +103,42 @@ Tail extent beyond stem: EL 142→85 · Bold 128→77 · Heavy 111→67 units.
       Heavy @72, Italic @84 + 12px)
 - [x] lcaron: caron offset is baked (x=177 EL), NOT anchor-driven — checked
       visually, still sits correctly; no edit needed
-- [ ] Nunito Sans replay notes: find the same stem-junction pivot node in
-      its `l`; if its node structure differs, only the pivot/indices need
-      re-deriving — FACTOR 0.6 and the width/anchor rules carry over.
-      NB Nunito Sans's l tail may already be shorter/straighter — compare
-      before applying blindly.
+- 🔁 **Nunito Sans replay — DONE (2026-07-06).** FACTOR 0.6 and the
+      width/anchor rules carried over unchanged; only indices re-derived.
+      - **Fork-wide finding (affects ALL edits):** the Nunito Sans source is
+        **Glyphs 3** (`.formatVersion = 3`). Nodes serialize as `(x,y,code)`
+        (code ∈ o/c/cs/l/ls), anchors as `pos = (x,y)`, and some masters
+        carry **fractional widths** — all different from Nunito's Glyphs 2.
+        `lib.py` was adapted once (NODE_RE, `fmt_node`, anchor regex, float
+        widths) and now drives every edit.
+      - **Topology differs from Nunito:** Nunito Sans's `l` is a **16-node**
+        single path (Nunito: 26), with a **straight-cut** terminal, not a
+        round bulb. Landmarks: node 10 = stem top-right (**pivot = its x**),
+        node 11 = stem top-left, tip = **max x** (node 3, except the 6pt
+        masters bulge at node 2). Tail = every node with x > pivot.
+      - **Nunito's 1b round-corner restore is NOT needed here** — the cut
+        terminal's top-right is already a hard corner, so plain compression
+        keeps it clean (verified on the big-`l` ramp, EL/Bold/ExtraBlack).
+      - 14 roman masters, structure preserved, fontmake interpolation clean;
+        `Il1` distinct at 10px; foot clearly shortened, terminal cut intact.
+      - Composites (fl, lacute, lslash, …) reference the `l` component and
+        inherit automatically (build clean). **Italics deferred.**
+
+      Per-master (pivot / tip old→new / width old→new / tail-ext old→new):
+
+      | Master | pivot | tip | width | ext |
+      |---|---|---|---|---|
+      | 12pt ExtraLight | 127 | 268→212 | 275→219 | 141→85 |
+      | 12pt Bold | 190 | 309→261 | 319→271 | 119→71 |
+      | 12pt ExtraBlack | 252 | 349→310 | 364→325 | 97→58 |
+      | 12pt Cond ExtraLight | 112 | 225→180 | 237→192 | 113→68 |
+      | 12pt Cond ExtraBlack | 224 | 297→268 | 314→285 | 73→44 |
+      | 12pt Exp ExtraLight | 150 | 328→257 | 332→261 | 178→107 |
+      | 12pt Exp ExtraBlack | 291 | 421→369 | 437→385 | 130→78 |
+      | 6pt ExtraLight | 158 | 301→244 | 314→257 | 143→86 |
+      | 6pt Bold | 223 | 355→302 | 362.78→310 | 132→79 |
+      | 6pt ExtraBlack | 287 | 411→361 | 411→361 | 124→74 |
+      | 12pt XL/XBlk YTLC Min/Max | = 12pt base | | | |
 
 ---
 

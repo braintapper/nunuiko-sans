@@ -4,21 +4,40 @@ glyphsLib is used READ-ONLY to parse geometry; edits are applied as
 targeted text surgery (GSFont.save drops kerning groups / feature code —
 see PLAYBOOK.md). Node lines are replaced positionally, never by content
 matching (a new coordinate can collide with a later node's line).
+
+Nunito Sans note: this source is Glyphs 3 (.formatVersion = 3), whose
+serialization differs from Nunito's Glyphs 2 file:
+  - nodes are `(x,y,code)` tuples, code in o/c/cs/l/ls/q/qs, NOT the
+    Glyphs 2 `"x y TYPE SMOOTH"` strings;
+  - anchors use `pos = (x,y)`, NOT `position = "{x, y}"`.
 """
 import re
 
 from glyphsLib import GSFont
 
 NUM = r"-?\d+(?:\.\d+)?"
-NODE_RE = re.compile(rf'"{NUM} {NUM} (?:OFFCURVE|CURVE|LINE|QCURVE)(?: SMOOTH)?"')
-WIDTH_RE = re.compile(r"width = (\d+);")
+# Glyphs 3 node: (x,y,code)
+NODE_RE = re.compile(rf"\({NUM},{NUM},(?:o|c|cs|l|ls|q|qs)\)")
+# widths may be fractional in interpolated / 6pt masters
+WIDTH_RE = re.compile(rf"width = ({NUM});")
+
+# glyphsLib (type, smooth) <-> Glyphs 3 one/two-letter code
+_CODE_FOR = {
+    ("offcurve", False): "o", ("offcurve", True): "o",
+    ("curve", False): "c", ("curve", True): "cs",
+    ("line", False): "l", ("line", True): "ls",
+    ("qcurve", False): "q", ("qcurve", True): "qs",
+}
+
+
+def _num(v):
+    # match Glyphs' own formatting: ints without a trailing .0
+    return f"{v:.10g}"
 
 
 def fmt_node(x, y, ntype, smooth):
-    s = f'"{x:.10g} {y:.10g} {ntype.upper()}'
-    if smooth:
-        s += " SMOOTH"
-    return s + '"'
+    code = _CODE_FOR[(ntype.lower(), bool(smooth))]
+    return f"({_num(x)},{_num(y)},{code})"
 
 
 def apply_edit(glyphs_path, glyph_name, edit_fn):
@@ -89,10 +108,11 @@ def apply_edit(glyphs_path, glyph_name, edit_fn):
             new_region = region
 
         if result.get("width") is not None:
-            old_width = int(wmatch.group(1))
-            assert old_width == layer.width, (mname, old_width, layer.width)
+            old_width_str = wmatch.group(1)
+            assert abs(float(old_width_str) - layer.width) < 1e-6, (
+                mname, old_width_str, layer.width)
             new_region = new_region.replace(
-                f"width = {old_width};", f"width = {result['width']};"
+                f"width = {old_width_str};", f"width = {result['width']};"
             )
 
         # this layer's full dict (anchors live BEFORE layerId): spans from
@@ -107,8 +127,8 @@ def apply_edit(glyphs_path, glyph_name, edit_fn):
             if a.name not in result.get("anchors", {}):
                 continue
             nx, ny = result["anchors"][a.name]
-            old = f'position = "{{{a.position.x:g}, {a.position.y:g}}}";'
-            new = f'position = "{{{round(nx):g}, {round(ny):g}}}";'
+            old = f"pos = ({_num(a.position.x)},{_num(a.position.y)});"
+            new = f"pos = ({round(nx):g},{round(ny):g});"
             count = new_scope.count(old)
             assert count in (1, 2), (mname, a.name, count)
             new_scope = new_scope.replace(old, new)
