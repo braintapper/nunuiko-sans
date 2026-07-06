@@ -117,39 +117,19 @@ def edit_factory(font):
         T_in = (C_in[0] - R * d[0], C_in[1] - R * d[1])
         assert (T_in[0] - c_inner[0]) * d[0] + (T_in[1] - c_inner[1]) * d[1] > 0, mname
 
-        # winding must match O's outer ring (else nonzero fill cancels);
-        # flipping the normal mirrors the traversal orientation
-        half = (n[0] * R, n[1] * R)
-        rect = [(C_in[0] - half[0], C_in[1] - half[1]),
-                (C_out[0] - half[0], C_out[1] - half[1]),
-                (C_out[0] + half[0], C_out[1] + half[1]),
-                (C_in[0] + half[0], C_in[1] + half[1])]
-        # NB the capsule below traverses this cycle in REVERSE (out_hi ->
-        # out_lo -> in_lo -> in_hi), so flip n when the areas AGREE
-        s = -1 if signed_area(rect) * signed_area([xy(p) for p in outer]) > 0 else 1
-        n = (s * n[0], s * n[1])
-
-        # capsule: two semicircular caps (two quarter-arc cubics each,
-        # tension 0.5523) joined by straight edges — fully round terminals
-        # like the font's other line ends
+        # flat butt caps with HARD corners — Nunito Sans's straight-cut
+        # vocabulary (Nunito's round caps don't port; see GLYPHLOG). The
+        # flat end sits at the tip (C + e*R) so the ink extent matches what
+        # the round version reached; four line corners make a parallelogram.
         add = lambda p, v, k=1.0: (p[0] + k * v[0], p[1] + k * v[1])
-        kR = CAP_TENSION * R
-        nodes_out = []
-        # sg = which side of the stroke the cap is entered from, so the
-        # two straight edges connect exit(outer)->entry(inner) and back
-        for C, e, sg in ((C_out, d, 1), (C_in, (-d[0], -d[1]), -1)):
-            A = add(C, n, sg * R)     # entry side point (ends straight edge)
-            T = add(C, e, R)          # round tip
-            B = add(C, n, -sg * R)    # exit side point
-            nodes_out += [
-                (*A, "line", True),
-                (*add(A, e, kR), "offcurve", False),
-                (*add(T, n, sg * kR), "offcurve", False),
-                (*T, "curve", True),
-                (*add(T, n, -sg * kR), "offcurve", False),
-                (*add(B, e, kR), "offcurve", False),
-                (*B, "curve", True),
-            ]
+        rect = [add(add(C_out, d, R), n, R),   # outer tip, +n corner
+                add(add(C_out, d, R), n, -R),   # outer tip, -n corner
+                add(add(C_in, (-d[0], -d[1]), R), n, -R),  # inner tip, -n
+                add(add(C_in, (-d[0], -d[1]), R), n, R)]   # inner tip, +n
+        # winding must match O's outer ring (else nonzero fill cancels)
+        if signed_area(rect) * signed_area([xy(p) for p in outer]) < 0:
+            rect.reverse()
+        nodes_out = [(x, y, "line", False) for x, y in rect]
         ox, oy = q_offsets[layer.layerId]
         nodes_out = [(x - ox, y - oy, t, sm) for x, y, t, sm in nodes_out]
         print(f"{mname:20s} w_slash={w:.0f} R={R:.1f} "

@@ -344,19 +344,22 @@ outlines per master:
       the deeper 4d inner tip; guard assert in the script)
 - [x] 4d slash length/dip verified against baseline guide at 200/700/1000
       upright + italic (outer tip dips below, inner reaches deeper)
-- 🔁 **Nunito Sans replay — DONE (2026-07-06). Near drop-in.**
+- 🔁 **Nunito Sans replay — DONE (2026-07-06); caps revised to HARD
+        corners (user feedback).**
       - **Q IS `O` + `_part.Qtail`** (both at offset 0,0; tail used only by
         Q), and O is structurally identical to Nunito's, so ALL the
-        O-derived geometry ported UNCHANGED — only `GLYPHS_FILE` changed.
-        `_part.Qtail` starts at 10 nodes here (Nunito: 12) but is fully
-        replaced by the 14-node capsule, so the original count is moot.
-      - **MAX_COUNTER_FRAC 0.6 kept** — verified by eye: counter stays open
-        at every weight incl. ExtraBlack (weight capped 104 vs ring 204),
-        slash proportionate, rounded caps, outer tip dips just below the
-        baseline (4d). No re-tuning needed.
-      - Component offset is (0,0) here, so part-local conversion is a no-op;
-        winding-match against O's outer ring resolves identically in all
-        masters. 14 roman masters, fontmake clean. **Italics deferred.**
+        O-derived geometry (M, w_ring, counter_r, direction, 4d extension)
+        ported UNCHANGED. `_part.Qtail` is fully replaced.
+      - **Caps are FLAT butt caps (hard corners), NOT Nunito's round caps.**
+        Nunito's 4c round semicircular caps are its rounded vocabulary;
+        Nunito Sans is straight-cut, so the slash ends flat (perpendicular
+        to the slash), four line corners — a true Jost slash. The flat end
+        sits at the tip (C + d·R) so ink extent matches the round version;
+        winding matched to O's outer ring. `_part.Qtail` is now 4 nodes.
+      - **MAX_COUNTER_FRAC 0.6 kept** — counter stays open at every weight
+        incl. ExtraBlack (weight capped 104 vs ring 204); outer tip dips
+        just below baseline (4d). 14 roman masters, fontmake clean.
+        **Italics deferred.**
 
 ---
 
@@ -502,27 +505,36 @@ k/ĸ: Bold 0.37, Heavy 0.63, Bold It 0.39, Heavy It 0.67.
 - [x] Same 34-node count/order in all masters; fontmake clean
 - [x] K, k, ĸ joints visually matched at 200/1000, upright + italic
 - [x] 10px legibility strip (Kick KLERK kayak) at 200/400/1000
-- 🔁 **Nunito Sans replay — DONE (2026-07-06).** BRANCH_FRAC 0.25 floor
-      kept; the floor logic ports, but the MECHANISM was re-derived.
+- 🔁 **Nunito Sans replay — DONE (2026-07-06); construction REDONE after
+        user feedback** (arm must reach the stem; leg must branch off the
+        arm with a consistent stroke width).
       - **Topology:** K/k/kgreenlandic are 14-node all-straight paths
-        (Nunito: 34, with a rounded leg-foot cap). Heavy masters are indeed
-        already notched (K: Bold 0.21, ExtraBlack 0.34; k: Bold 0.30,
-        ExtraBlack 0.47) — same pattern as Nunito — so only the light
-        masters move. Landmarks: node 1 = stem right, 6 = arm-bottom inner
-        (crotch), 7 = arm tip, 5 = leg-bottom inner; edge 5→6 = notch face.
-      - **Leg rotation about the foot does NOT port.** Nunito rotated the
-        leg rigidly about its ROUNDED foot-cap; Nunito Sans's leg foot is a
-        FLAT baseline cut that would tilt off the baseline under rotation.
-        Instead the notch is opened directly: slide the notch face
-        (nodes 5,6) out along the arm-bottom line to frac 0.25, face kept
-        rigid — the leg-bottom edge re-angles, arm-bottom starts further
-        out, foot / stem attachments / tip stay put. Only nodes 5,6 move,
-        so structure is trivially interpolation-safe.
-      - kgreenlandic shares k's topology (edited in the same run).
-        **Ka-cy/ka-cy (Cyrillic К) left stock** — different construction.
-      - Verified by eye (junction zoom EL/Bold, Kick ramp): clean open
-        crotch, no artifacts. 14 roman masters, fontmake clean. Italics
-        deferred.
+        (Nunito: 34, rounded foot cap). Landmarks: node 1 = stem right,
+        2 = leg-lower inner (on stem), 3/4 = leg foot (flat on baseline),
+        5 = leg-upper inner, 6 = arm-bottom inner (crotch), 7 = arm tip,
+        9 = arm-top inner (on stem).
+      - **First attempt (sliding the notch face out) was WRONG** — it
+        pulled the arm-bottom off the stem and bulged the leg (the
+        leg-upper moved out while the lower stayed, so the width blew up
+        near the stem). Fixed by re-deriving the real notch: keep the leg a
+        **consistent-width** stroke and STEEPEN it about the foot
+        (re-cutting node4 flat on the baseline), moving the branch — where
+        leg-upper meets arm-bottom — outward. The arm reaches the stem via
+        its top edge; the leg branches off the arm-bottom.
+      - **Nunito's rigid leg-rotation about the foot-cap doesn't port**
+        (flat baseline foot would tilt); and forcing a fixed frac 0.25
+        breaks the LIGHT masters — they are proportionally WIDE (foot far
+        from the stem), so a deep notch drives the leg vertical and node2
+        past the cap height. Depth is therefore **self-limited**: node2 is
+        placed Y2_FRAC (0.60) of the way from S (arm-bottom-at-stem) up to
+        node9, matching where the native heavy masters sit. Result: subtle
+        notch at light weights, pronounced at heavy — the progression
+        Nunito Sans already draws (K native fracs Bold 0.21 / XBlack 0.34).
+      - All masters use the one construction (better interpolation than
+        mixing native-heavy + computed-light). Only nodes 2,4,5,6 move.
+        kgreenlandic shares k's topology; Cyrillic Ka-cy/ka-cy left stock.
+        Verified by eye across 200–1000. 14 roman masters, fontmake clean.
+        Italics deferred.
 
 ---
 
