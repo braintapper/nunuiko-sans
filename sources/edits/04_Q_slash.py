@@ -34,7 +34,7 @@ from glyphsLib import GSFont
 
 from lib import apply_edit
 
-GLYPHS_FILE = "Nunuiko.glyphs"
+GLYPHS_FILE = "NunuikoDisplay.glyphs"
 ANGLE_DEG = 45          # slash angle below horizontal, upright masters
 ITALIC_SHEAR = math.tan(math.radians(9))
 K_IN_FRAC = 0.35        # inner ink tip: fraction of counter radius past the ring

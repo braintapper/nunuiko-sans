@@ -327,9 +327,19 @@ outlines per master:
       the deeper 4d inner tip; guard assert in the script)
 - [x] 4d slash length/dip verified against baseline guide at 200/700/1000
       upright + italic (outer tip dips below, inner reaches deeper)
-- [ ] Nunito Sans replay notes: check whether its Q is also
-      O + _part composite; re-judge MAX_COUNTER_FRAC by eye (its
-      counters differ).
+- 🔁 **Nunito Sans replay — DONE (2026-07-06). Near drop-in.**
+      - **Q IS `O` + `_part.Qtail`** (both at offset 0,0; tail used only by
+        Q), and O is structurally identical to Nunito's, so ALL the
+        O-derived geometry ported UNCHANGED — only `GLYPHS_FILE` changed.
+        `_part.Qtail` starts at 10 nodes here (Nunito: 12) but is fully
+        replaced by the 14-node capsule, so the original count is moot.
+      - **MAX_COUNTER_FRAC 0.6 kept** — verified by eye: counter stays open
+        at every weight incl. ExtraBlack (weight capped 104 vs ring 204),
+        slash proportionate, rounded caps, outer tip dips just below the
+        baseline (4d). No re-tuning needed.
+      - Component offset is (0,0) here, so part-local conversion is a no-op;
+        winding-match against O's outer ring resolves identically in all
+        masters. 14 roman masters, fontmake clean. **Italics deferred.**
 
 ---
 
