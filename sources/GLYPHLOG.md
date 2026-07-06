@@ -189,9 +189,28 @@ Heavy (381,564) 478→509 · same pattern italics. fi within 1–2 units of f.
 - [x] fi edited to match; fl/fl.ss02 inherit via components; florin
       deliberately stock
 - [x] No collision in fluff / offer / fjord at Regular, Heavy, Italic
-- [ ] Nunito Sans replay notes: check whether its fi is also drawn
-      separately; its straight-cut terminal may need the angle re-judged
-      by eye (12° chosen against Nunito's round terminal).
+- 🔁 **Nunito Sans replay — DONE (2026-07-06).** Same operation
+      (rotate the terminal + both approach handles clockwise about the
+      underside neck), **angle re-judged to 10°**.
+      - **Topology:** f = 22-node single path; the terminal is a STRAIGHT
+        CUT (4-node run: curve-smooth neck / two line corners / line-smooth
+        neck), not Nunito's round bulb — Nunito's 7-node round-cap pattern
+        does not exist here. New locator matches this cut-cap signature
+        inside path 0 and takes the highest cap. Pivot: **f n9**, **fi n11**.
+      - **fi IS drawn separately** (28 nodes, 2 paths — confirms Nunito's
+        finding) and was edited too; its i-dot (path 1, four plain lines)
+        is skipped by the path-0-only locator. fl/fl.ss02 inherit via
+        components; florin (32 nodes, different terminal) left stock.
+      - **Angle: 10°, not 12°.** A straight cut reads an angle ~1.3× more
+        strongly than a round bulb, so 10° matches the sibling's
+        perceived-subtle 12°. Verified by eye at 8/10/12: 12 over-hooked at
+        Bold/ExtraBlack, 8 barely read at UI sizes; 10 is a clean, subtle
+        downturn that survives the fjord/fluff ramp with no collisions.
+      - Rotating the cap plus BOTH approach handles (n_p-1 outer, n_p+4
+        inner) about the neck keeps every SMOOTH joint exact; only the
+        outer arch and inner return reshape slightly. 14 roman masters,
+        structure preserved, fontmake interpolation clean. **Italics
+        deferred.**
 
 ---
 
