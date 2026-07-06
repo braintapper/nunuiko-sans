@@ -390,9 +390,31 @@ it reads as the bar tucking into the bowl. **Replay order: 03 then 03b.**
 - [x] Same 35-node structure in all masters; fontmake clean
 - [x] Overlay + EL/Regular/Heavy @200px + Google/GIGA/OGRE context +
       italics all verified visually
-- [ ] Nunito Sans replay notes: verify its G/O also share the skeleton
-      (assert tolerances in the script will tell); bar-node indices may
-      differ — the script's semantic asserts locate drift immediately.
+- 🔁 **Nunito Sans replay — DONE (2026-07-06). 03b SKIPPED by design.**
+      - **O is structurally identical to Nunito's** (2 paths × 12 nodes,
+        same extrema semantics), so the entire O-side split/graft logic
+        ported UNCHANGED. G/O DO share the skeleton: G's outer left/bottom
+        and inner left are O's verbatim (only outer-right + inner-right
+        were pulled in) — so the graft is even cleaner than Nunito's.
+      - **G is 31 nodes here (Nunito: 44); assembly is 28 (Nunito: 35).**
+        Bar left-end is a **straight cut** (two line corners, nodes 4/5),
+        not Nunito's rounded U. Arm/terminal/outer-top = G nodes 18–24
+        verbatim (terminal is a straight cut, ends where it always did).
+        Corner A nudge branch fires (O right extremum y≈354 ≈ bar top 355).
+      - **03b (fillet corner A) is NOT applied.** Nunito rounded corner A
+        because a sharp corner clashed with its *round* terminals. Nunito
+        Sans's vocabulary is the opposite — straight cuts, sharp corners
+        (its bar left-end and arm terminal are sharp; the *original* G's
+        aperture corner was sharp too). A crisp corner A is correct here;
+        rounding it would break consistency. Verified by eye at
+        EL/Bold/ExtraBlack (big G): clean aperture, no spike.
+      - **rightKerningGroup G→O is N/A:** O, C and G all have no source
+        kerning groups in Nunito Sans (kerning is via generated GPOS
+        classes), so there is nothing to assign.
+      - Width := O's (per-master 718→751 / 736→785 / 754→820 / …); anchors
+        top/bottom := O's (bowl recentered); composites (Gbreve, Gcaron,
+        …) inherit via components. 14 roman masters, fontmake clean.
+        **Italics deferred.**
 
 ---
 

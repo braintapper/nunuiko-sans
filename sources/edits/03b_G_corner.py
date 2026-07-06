@@ -1,5 +1,12 @@
 """Glyph edit 3b: round the G bar's top-right corner (corner A from 03).
 
+NOT APPLIED to Nunuiko Display (Nunito Sans cut). Nunito rounded corner A
+because a sharp corner clashed with its round terminals; Nunito Sans's
+vocabulary is straight cuts / sharp corners, so corner A stays crisp (see
+GLYPHLOG glyph 3 replay notes). Kept for reference / the Nunito cut; its
+len==35 assert refers to Nunito's 35-node G and will fail here by design.
+
+
 The 03 reconstruction leaves a sharp corner where the bar's top edge
 meets O's outer right arc — out of character for the font. Replace it
 with a small fillet whose radius matches the bar left-end's own corner

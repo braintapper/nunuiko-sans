@@ -1,48 +1,50 @@
 """Glyph edit 3 (fonts.md item 5): rebuild G on O's bowl.
 
 Design (see GLYPHLOG.md): the new G is O's full round bowl, opened at the
-top right, keeping from the original G:
-  - the horizontal bar at its original height and original left end,
-  - the upper-arm terminal ending in the same place,
-  - the arm/top/left outer (which is ALREADY identical to O's left side —
-    G and O share a skeleton in Nunito).
+top right for the arm, keeping from the original G the horizontal bar (at
+its own height + left end) and the upper-arm terminal (ending where it
+always did). G and O already share a skeleton (outer left/bottom, inner
+left are O's), so only the pulled-in outer-right and inner-right are
+replaced with O's rounder arcs, joined at two computed corners.
 
-Assembly (single path, 35 nodes, in original G's traversal order):
-  G bar left-end U (G nodes 10-16, verbatim)
-  -> bar underside LINE right to corner B on O's INNER right side at the
-     bar's underside y (cubic split)
-  -> down O's inner right (split remainder), inner bottom, inner left,
-     inner top (O inner nodes 9..5 semantics)
-  -> original G arm inner + terminal cap + outer top + outer left
-     (G nodes 29..40, verbatim; G40 == O outer left node)
-  -> O's outer bottom + outer right rising to corner A at the bar's TOP
-     edge y (cubic split; in uprights O's right extremum sits ~1 unit
-     below the bar top, so A is the extremum nudged up — no split)
-  -> LINE left along bar top back to start.
+Nunito Sans replay: O is structurally identical to Nunito's O (2 paths x
+12 nodes, extrema at local 2/5/8/11 = right/top/left/bottom outer,
+left/top/right/bottom inner), so the O-side split/graft logic ports
+UNCHANGED. Only the G-side landmark indices differ (G is 31 nodes here,
+44 in Nunito) and the bar left-end is a STRAIGHT cut (two line corners),
+not Nunito's rounded U. Assembly is 28 nodes (Nunito: 35).
 
-Also: width := O's width; anchors top/bottom := O's (bowl recentered);
-rightKerningGroup G -> O (right side is now O's round bowl).
+  gn[4]  line      bar top-left corner   (bar_top_y)
+  gn[5]  line      bar bottom-left corner (bar_bot_y)
+  gn[18,19] off / gn[20] curve / gn[21] line / gn[22,23] off / gn[24] cs
+                   = arm inner + straight-cut terminal + outer top (verbatim)
 
-Run once from sources/: python3 edits/03_G_bowl.py
+Assembly order (single path, original traversal direction):
+  bar top-left -> bar bottom-left -> bar underside LINE to corner B (split
+  O inner-right at bar_bot_y) -> down to O inner bottom/left/top -> G arm
+  inner + terminal + outer top -> O outer top->left->bottom -> rise O
+  outer-right to corner A (split/nudge at bar_top_y) -> LINE bar top back.
+
+Also: width := O's; anchors top/bottom := O's (bowl recentered).
+Run once from sources/: python3 edits/03_G_bowl.py  (then 03b).
 """
 from glyphsLib import GSFont
 
 from lib import apply_edit
 
-GLYPHS_FILE = "Nunuiko.glyphs"
+GLYPHS_FILE = "NunuikoDisplay.glyphs"
+
+BAR_TL, BAR_BL = 4, 5           # bar left-end corners (define the two y's)
+ARM = (18, 19, 20, 21, 22, 23, 24)  # arm inner / terminal / outer top
 
 
 def cubic_point(p0, c1, c2, p3, t):
     u = 1 - t
-    return tuple(
-        u**3 * p0[i] + 3 * u * u * t * c1[i] + 3 * u * t * t * c2[i] + t**3 * p3[i]
-        for i in (0, 1)
-    )
+    return tuple(u**3 * p0[i] + 3 * u * u * t * c1[i]
+                 + 3 * u * t * t * c2[i] + t**3 * p3[i] for i in (0, 1))
 
 
 def split_cubic(p0, c1, c2, p3, t):
-    """De Casteljau: returns (first piece, second piece), each
-    (p0, c1, c2, p3)."""
     lerp = lambda a, b: (a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t)
     a, b, c = lerp(p0, c1), lerp(c1, c2), lerp(c2, p3)
     d, e = lerp(a, b), lerp(b, c)
@@ -70,87 +72,64 @@ def check(nodes, idx, ntype, smooth=None):
     n = nodes[idx]
     assert n.type == ntype, (idx, n.type, ntype)
     if smooth is not None:
-        assert n.smooth == smooth, (idx, n.smooth)
+        assert bool(n.smooth) == smooth, (idx, n.smooth)
     return xy(n)
 
 
 def build_new_g(gn, o_outer, o_inner):
-    """gn: G nodes (44); o_outer/o_inner: O path nodes (12 each).
-    Returns list of (x, y, type, smooth)."""
-    # sanity-check the semantics we rely on
-    check(gn, 10, "line", True)      # bar top, left of it the left-end U
-    check(gn, 13, "curve", True)
-    check(gn, 16, "curve", True)     # bar underside left
-    check(gn, 17, "line")            # bar underside right end
-    check(gn, 31, "curve", True)     # arm inner end
-    check(gn, 34, "curve", True)     # terminal cap outer end
-    check(gn, 37, "curve", True)     # outer top
-    check(gn, 40, "curve", True)     # outer left == O outer node 8
+    check(gn, BAR_TL, "line")
+    check(gn, BAR_BL, "line")
+    check(gn, 20, "curve", False)
+    check(gn, 21, "line", False)
+    check(gn, 24, "curve", True)
     for i in (2, 5, 8, 11):
         check(o_outer, i, "curve", True)
         check(o_inner, i, "curve", True)
-    # G's outer left must sit close to O's so the graft is invisible; the
-    # junction node uses O's position so the O-side joint is exact
-    g40, o8 = xy(gn[40]), xy(o_outer[8])
-    assert abs(g40[0] - o8[0]) <= 2 and abs(g40[1] - o8[1]) <= 10, (g40, o8)
 
-    bar_top_y = gn[10].position.y
-    bar_bot_y = gn[16].position.y
+    bar_top_y = gn[BAR_TL].position.y
+    bar_bot_y = gn[BAR_BL].position.y
+    assert bar_top_y > bar_bot_y, (bar_top_y, bar_bot_y)
 
-    # corner B: split O inner right-descending arc (8 -> 9,10 -> 11)
-    p0, c1, c2, p3 = xy(o_inner[8]), xy(o_inner[9]), xy(o_inner[10]), xy(o_inner[11])
+    # corner B: split O inner-right arc (8 -> 9,10 -> 11) at bar underside y
+    p0, c1, c2, p3 = (xy(o_inner[8]), xy(o_inner[9]), xy(o_inner[10]), xy(o_inner[11]))
     t = solve_t_for_y(p0, c1, c2, p3, bar_bot_y, increasing=False)
     _, (B, B1, B2, _) = split_cubic(p0, c1, c2, p3, t)
     B = (B[0], bar_bot_y)
 
-    # corner A: split O outer bottom-to-right-extremum arc (11 -> 0,1 -> 2)
-    p0, c1, c2, p3 = xy(o_outer[11]), xy(o_outer[0]), xy(o_outer[1]), xy(o_outer[2])
+    # corner A: rise up O outer-right arc (11 -> 0,1 -> 2) to bar top y.
+    # If O's right extremum sits at/just below the bar top, nudge it up
+    # (no split); else split the arc at bar_top_y.
+    p0, c1, c2, p3 = (xy(o_outer[11]), xy(o_outer[0]), xy(o_outer[1]), xy(o_outer[2]))
     if p3[1] <= bar_top_y + 2:
-        # extremum sits at/just below the bar top: nudge it up, keep controls
         A1, A2, A = c1, c2, (p3[0], bar_top_y)
     else:
-        (_, A1, A2, A), _ = split_cubic(p0, c1, c2, p3,
-                                        solve_t_for_y(p0, c1, c2, p3, bar_top_y, increasing=True))
+        (_, A1, A2, A), _ = split_cubic(
+            p0, c1, c2, p3, solve_t_for_y(p0, c1, c2, p3, bar_top_y, increasing=True))
         A = (A[0], bar_top_y)
 
     out = []
     add = lambda pt, t_, sm=False: out.append((pt[0], pt[1], t_, sm))
-    add(xy(gn[10]), "line", True)            # bar top left end
-    for i in (11, 12):
-        add(xy(gn[i]), "offcurve")
-    add(xy(gn[13]), "curve", True)
-    for i in (14, 15):
-        add(xy(gn[i]), "offcurve")
-    add(xy(gn[16]), "curve", True)
-    add(B, "line")                           # bar underside -> corner B
-    add(B1, "offcurve")
-    add(B2, "offcurve")
-    add(xy(o_inner[11]), "curve", True)      # inner bottom
-    add(xy(o_inner[0]), "offcurve")
-    add(xy(o_inner[1]), "offcurve")
-    add(xy(o_inner[2]), "curve", True)       # inner left
-    add(xy(o_inner[3]), "offcurve")
-    add(xy(o_inner[4]), "offcurve")
-    add(xy(o_inner[5]), "curve", True)       # inner top
-    for i in (29, 30):
-        add(xy(gn[i]), "offcurve")           # arm inner
-    add(xy(gn[31]), "curve", True)
-    for i in (32, 33):
-        add(xy(gn[i]), "offcurve")
-    add(xy(gn[34]), "curve", True)           # terminal cap
-    for i in (35, 36):
-        add(xy(gn[i]), "offcurve")
-    add(xy(gn[37]), "curve", True)           # outer top
-    for i in (38, 39):
-        add(xy(gn[i]), "offcurve")
-    add(o8, "curve", True)                   # outer left (graft at O's node)
-    add(xy(o_outer[9]), "offcurve")
-    add(xy(o_outer[10]), "offcurve")
-    add(xy(o_outer[11]), "curve", True)      # outer bottom
-    add(A1, "offcurve")
-    add(A2, "offcurve")
-    add(A, "curve")                          # corner A (not smooth)
-    assert len(out) == 35
+    add(xy(gn[BAR_TL]), "line")            # bar top-left corner (start)
+    add(xy(gn[BAR_BL]), "line")            # bar bottom-left corner
+    add(B, "line")                         # bar underside -> corner B
+    add(B1, "offcurve"); add(B2, "offcurve")
+    add(xy(o_inner[11]), "curve", True)    # inner bottom
+    add(xy(o_inner[0]), "offcurve"); add(xy(o_inner[1]), "offcurve")
+    add(xy(o_inner[2]), "curve", True)     # inner left
+    add(xy(o_inner[3]), "offcurve"); add(xy(o_inner[4]), "offcurve")
+    add(xy(o_inner[5]), "curve", True)     # inner top
+    add(xy(gn[18]), "offcurve"); add(xy(gn[19]), "offcurve")
+    add(xy(gn[20]), "curve")               # arm inner end
+    add(xy(gn[21]), "line")                # terminal tip (straight cut)
+    add(xy(gn[22]), "offcurve"); add(xy(gn[23]), "offcurve")
+    add(xy(gn[24]), "curve", True)         # outer top
+    add(xy(o_outer[6]), "offcurve"); add(xy(o_outer[7]), "offcurve")
+    add(xy(o_outer[8]), "curve", True)     # outer left
+    add(xy(o_outer[9]), "offcurve"); add(xy(o_outer[10]), "offcurve")
+    add(xy(o_outer[11]), "curve", True)    # outer bottom
+    add(A1, "offcurve"); add(A2, "offcurve")
+    add(A, "curve")                        # corner A (sharp; LINE closes to start)
+    assert len(out) == 28, len(out)
     return out
 
 
@@ -164,7 +143,7 @@ def main():
         o_outer, o_inner = o.paths[0].nodes, o.paths[1].nodes
         new_nodes = build_new_g(nodes, o_outer, o_inner)
         o_anch = {a.name: (a.position.x, a.position.y) for a in o.anchors}
-        print(f"{mname:20s} 44->35 nodes, width {layer.width:g}->{o.width:g}")
+        print(f"{mname:26s} 31->28 nodes, width {layer.width:g}->{o.width:g}")
         return {
             "replace_nodes": new_nodes,
             "width": int(o.width),
@@ -172,16 +151,7 @@ def main():
         }
 
     assert apply_edit(GLYPHS_FILE, "G", edit)
-
-    # kerning class: right side is now O-shaped
-    text = open(GLYPHS_FILE).read()
-    bs = text.index("glyphname = G;")
-    be = text.index("glyphname = ", bs + 1)
-    block = text[bs:be]
-    assert block.count("rightKerningGroup = G;") == 1
-    block = block.replace("rightKerningGroup = G;", "rightKerningGroup = O;")
-    open(GLYPHS_FILE, "w").write(text[:bs] + block + text[be:])
-    print("rightKerningGroup G -> O\ndone")
+    print("done")
 
 
 if __name__ == "__main__":
