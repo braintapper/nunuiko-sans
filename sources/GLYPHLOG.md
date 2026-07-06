@@ -260,10 +260,27 @@ transform once, some twice incl. background).
 - [x] 26 nodes, same order/types, all 6 masters; fontmake clean
 - [x] JU proportion pairs at 200/400/1000; Ĵ accent centered; context
       Jump/Justice/IJssel/JOJO/NJ verified upright + italic
-- [ ] Nunito Sans replay notes: same landmark-based construction should
-      port directly; re-judge H_FRAC / HOOK_MAX_FRAC / WIDTH_FRAC_OF_U
-      by eye; hyphenated glyph names are quoted in the .glyphs file
-      (lib.py handles both).
+- 🔁 **Nunito Sans replay — DONE (2026-07-06).** Same landmark-based
+      construction; parameters (WIDTH_FRAC_OF_U 0.66, H_FRAC 0.9,
+      HOOK_MAX_FRAC 0.55) all kept — verified by eye.
+      - **Topology:** J is a 12-node single path (Nunito: 22). Landmarks
+        re-derived: node 3 = stem-right/curve-start, 4/5 = stem top,
+        6 = stem-left/curve-start, 9 = inner bottom, 10 = hook outer-left
+        (LSB), 11 = outer bottom. Output 16 nodes (Nunito: 26).
+      - **Terminal is a FLAT CUT, not Nunito's rounded cap.** Nunito's cap
+        copied its rounded stem-top; Nunito Sans's stem top is a flat cut,
+        so the hook ends in a flat horizontal cut (node 9 curve = end of
+        inner rise, node 10 line, segment 9→10 = the cut). Bottom of the U
+        stays round (kappa arcs). Gotcha: node 9 must be `curve` (it ends
+        an offcurve pair) — a `line` there triggers fontmake "Illegal line
+        segment point count: 3".
+      - Widen bowl-side (delta 87–229 across masters): stem shifts right,
+        hook outer-left (LSB) and RSB preserved. Composites IJ/I_J.loclNLD/
+        Iacute_J.loclNLD/Je-cy/LJ/NJ get width += delta; Jcircumflex also
+        gets accent `pos` tx += delta (Glyphs 3 stores the accent offset as
+        `pos = (x,y)`, not Nunito's `transform` string). j CANCELLED.
+      - 14 roman masters, fontmake clean; JU pairs + Jump/IJ/NJ + Ĵ centered
+        verified. **Italics deferred.**
 
 ---
 
