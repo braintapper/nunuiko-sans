@@ -513,28 +513,28 @@ k/ĸ: Bold 0.37, Heavy 0.63, Bold It 0.39, Heavy It 0.67.
         2 = leg-lower inner (on stem), 3/4 = leg foot (flat on baseline),
         5 = leg-upper inner, 6 = arm-bottom inner (crotch), 7 = arm tip,
         9 = arm-top inner (on stem).
-      - **First attempt (sliding the notch face out) was WRONG** — it
-        pulled the arm-bottom off the stem and bulged the leg (the
-        leg-upper moved out while the lower stayed, so the width blew up
-        near the stem). Fixed by re-deriving the real notch: keep the leg a
-        **consistent-width** stroke and STEEPEN it about the foot
-        (re-cutting node4 flat on the baseline), moving the branch — where
-        leg-upper meets arm-bottom — outward. The arm reaches the stem via
-        its top edge; the leg branches off the arm-bottom.
-      - **Nunito's rigid leg-rotation about the foot-cap doesn't port**
-        (flat baseline foot would tilt); and forcing a fixed frac 0.25
-        breaks the LIGHT masters — they are proportionally WIDE (foot far
-        from the stem), so a deep notch drives the leg vertical and node2
-        past the cap height. Depth is therefore **self-limited**: node2 is
-        placed Y2_FRAC (0.60) of the way from S (arm-bottom-at-stem) up to
-        node9, matching where the native heavy masters sit. Result: subtle
-        notch at light weights, pronounced at heavy — the progression
-        Nunito Sans already draws (K native fracs Bold 0.21 / XBlack 0.34).
-      - All masters use the one construction (better interpolation than
-        mixing native-heavy + computed-light). Only nodes 2,4,5,6 move.
-        kgreenlandic shares k's topology; Cyrillic Ka-cy/ka-cy left stock.
-        Verified by eye across 200–1000. 14 roman masters, fontmake clean.
-        Italics deferred.
+      - **Two dead ends:** (a) sliding the notch face out along the arm
+        pulled the arm-bottom off the stem and bulged the leg (leg-upper
+        moved out while the lower edge stayed → width blew up near the
+        stem); (b) a strictly consistent-width leg steepened about the foot
+        stays clean but is nearly INVISIBLE on the light masters — the
+        notch face scales with the (thin) stroke, and the light K is
+        proportionally WIDE (foot far from the stem), so a deep clean notch
+        drives the leg vertical. Nunito Sans itself draws its light K as a
+        chevron for exactly this reason; user confirmed (b) was too subtle.
+      - **Shipped construction (visible + clean):** move the branch
+        (nodes 5,6) out to **BRANCH_FRAC 0.22** of the arm run keeping the
+        original notch-face height, and **RAISE node2 up the stem** toward
+        node9 (0.70 of the way to 0.85·(node9−S)) so the leg's near-stem
+        width stays close to its foot width — a small, controlled width
+        variation traded for a notch that actually reads. Applied as a
+        floor (max with current frac); the already-notched heavy masters
+        (Bold 0.21→0.22, ExtraBlack 0.34 unchanged) stay ~as drawn. Only
+        nodes 2,5,6 move.
+      - kgreenlandic shares k's topology; Cyrillic Ka-cy/ka-cy left stock.
+        Verified by eye + interpolation ramp 200–1000 (clean, notch visible
+        at every weight). 14 roman masters, fontmake clean. Italics
+        deferred. NB depth/RAISE are the taste knobs if re-judged.
 
 ---
 
