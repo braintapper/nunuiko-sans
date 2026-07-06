@@ -1,7 +1,7 @@
     sources:
-      - NunitoSans.glyphs
-      - NunitoSans-Italic.glyphs
-    familyName: Nunito Sans
+      - NunuikoDisplay.glyphs
+      - NunuikoDisplay-Italic.glyphs
+    familyName: Nunuiko Display
     buildOTF: False
     buildWebfont: False
     axisOrder:
@@ -11,7 +11,7 @@
       - wght
       - ital
     stat:
-      NunitoSans[YTLC,opsz,wdth,wght].ttf:
+      NunuikoDisplay[YTLC,opsz,wdth,wght].ttf:
       - name: Lowercase Height
         tag: YTLC
         values:
@@ -69,7 +69,7 @@
           value: 0
           linkedValue: 1
           flags: 2
-      NunitoSans-Italic[YTLC,opsz,wdth,wght].ttf:
+      NunuikoDisplay-Italic[YTLC,opsz,wdth,wght].ttf:
       - name: Lowercase Height
         tag: YTLC
         values:

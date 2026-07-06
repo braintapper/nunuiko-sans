@@ -102,7 +102,7 @@ wght = {
 }
 );
 date = "2020-06-26 13:15:20 +0000";
-familyName = "Nunito Sans";
+familyName = "Nunuiko Display";
 featurePrefixes = (
 {
 automatic = 1;
@@ -397579,7 +397579,7 @@ key = familyNames;
 values = (
 {
 language = dflt;
-value = "Nunito Sans ExtraBlack";
+value = "Nunuiko Display ExtraBlack";
 }
 );
 }
@@ -425599,7 +425599,7 @@ key = copyrights;
 values = (
 {
 language = dflt;
-value = "Copyright 2016 The Nunito Sans Project Authors (https://github.com/Fonthausen/NunitoSans)";
+value = "Copyright 2026 The Nunuiko Display Project Authors. Copyright 2016 The Nunito Sans Project Authors (https://github.com/Fonthausen/NunitoSans)";
 }
 );
 },

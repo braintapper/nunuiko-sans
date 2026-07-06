@@ -1,2 +1,4 @@
 .DS_Store
 *(Autosaved)*
+.venv/
+__pycache__/

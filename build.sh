@@ -1,39 +1,25 @@
-TTFDIR=./fonts/ttf
-# VFDIR=./fonts/vf
-mkdir -p $TTFDIR
-# mkdir -p $VFDIR
-rm -r $TTFDIR/*.ttf
-# rm -r $VFDIR/*.ttf
+#!/usr/bin/env bash
+# Build Nunuiko Display (Nunito Sans-derived straight-terminal cut).
+#
+# gftools 0.9.996's builder reads sources/config.yaml, builds the static
+# instances + the two variable fonts (roman + italic), splits roman/italic
+# itself, and sets STAT / italic bits — its output is already final (no
+# separate instancer / gen-stat / fix.py step; see PLAYBOOK.md).
+#
+# display_name.py then stamps the diaeresis onto the PUBLIC name records
+# (Nunuiko Display -> Nunuïko Display); PostScript names / filenames stay
+# ASCII. Run from the repo root with the venv active:
+#   source .venv/bin/activate && ./build.sh
+set -e
 
-# Build static instances
-fontmake -g "./sources/NunitoSans [opsz,slnt,wdth,wght,xhgt].glyphs" -o ttf -i --output-dir $TTFDIR -a
-# fontmake -g "./Sources/Petrona-ITALIC-MASTER.glyphs" -o ttf -i --output-dir $TTFDIR -a
-for f in $TTFDIR/*.ttf
-do
-	echo Processing $f
-	gftools fix-dsig --autofix $f
-	gftools fix-hinting $f
-	mv $f.fix $f
-done
+cd "$(dirname "$0")/sources"
 
-# set -e
-# # Build variable font
-# VF_FILENAME="$VFDIR/Petrona[wght].ttf"
-# fontmake -g "./Sources/Petrona-ROMAN-MASTER.glyphs" -o variable --output-path $VF_FILENAME
-# gftools fix-dsig --autofix $VF_FILENAME
-# ttfautohint $VF_FILENAME $VF_FILENAME.fix
-# mv $VF_FILENAME.fix $VF_FILENAME
-# gftools fix-hinting $VF_FILENAME
-# mv $VF_FILENAME.fix $VF_FILENAME
+gftools builder config.yaml
 
-# VF_FILENAME="$VFDIR/Petrona-Italic[wght].ttf"
-# fontmake -g "./Sources/Petrona-ITALIC-MASTER.glyphs" -o variable --output-path $VF_FILENAME
-# gftools fix-dsig --autofix $VF_FILENAME
-# ttfautohint $VF_FILENAME $VF_FILENAME.fix
-# mv $VF_FILENAME.fix $VF_FILENAME
-# gftools fix-hinting $VF_FILENAME
-# mv $VF_FILENAME.fix $VF_FILENAME
+# public family name -> diaeresis form (post-build, on the built VFs)
+python3 display_name.py
 
-# Clean up
-rm -r instance_ufo
-rm -r master_ufo
+# builder scratch dirs
+rm -rf instance_ufos master_ufo build.ninja .ninja_log 2>/dev/null || true
+
+echo "build.sh: done"
