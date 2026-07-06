@@ -502,10 +502,27 @@ k/ĸ: Bold 0.37, Heavy 0.63, Bold It 0.39, Heavy It 0.67.
 - [x] Same 34-node count/order in all masters; fontmake clean
 - [x] K, k, ĸ joints visually matched at 200/1000, upright + italic
 - [x] 10px legibility strip (Kick KLERK kayak) at 200/400/1000
-- [ ] Nunito Sans replay notes: run the script as-is (asserts will catch
-      topology drift); re-check whether its heavy masters are also
-      pre-notched — if not, the max() floor still just works. Check its
-      Cyrillic К construction separately.
+- 🔁 **Nunito Sans replay — DONE (2026-07-06).** BRANCH_FRAC 0.25 floor
+      kept; the floor logic ports, but the MECHANISM was re-derived.
+      - **Topology:** K/k/kgreenlandic are 14-node all-straight paths
+        (Nunito: 34, with a rounded leg-foot cap). Heavy masters are indeed
+        already notched (K: Bold 0.21, ExtraBlack 0.34; k: Bold 0.30,
+        ExtraBlack 0.47) — same pattern as Nunito — so only the light
+        masters move. Landmarks: node 1 = stem right, 6 = arm-bottom inner
+        (crotch), 7 = arm tip, 5 = leg-bottom inner; edge 5→6 = notch face.
+      - **Leg rotation about the foot does NOT port.** Nunito rotated the
+        leg rigidly about its ROUNDED foot-cap; Nunito Sans's leg foot is a
+        FLAT baseline cut that would tilt off the baseline under rotation.
+        Instead the notch is opened directly: slide the notch face
+        (nodes 5,6) out along the arm-bottom line to frac 0.25, face kept
+        rigid — the leg-bottom edge re-angles, arm-bottom starts further
+        out, foot / stem attachments / tip stay put. Only nodes 5,6 move,
+        so structure is trivially interpolation-safe.
+      - kgreenlandic shares k's topology (edited in the same run).
+        **Ka-cy/ka-cy (Cyrillic К) left stock** — different construction.
+      - Verified by eye (junction zoom EL/Bold, Kick ramp): clean open
+        crotch, no artifacts. 14 roman masters, fontmake clean. Italics
+        deferred.
 
 ---
 
