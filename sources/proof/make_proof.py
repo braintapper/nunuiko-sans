@@ -1,15 +1,13 @@
-"""Build the Nunuïko specimen/diff proof page (self-contained HTML).
+"""Build the Nunuïko Display specimen/diff proof page (self-contained HTML).
 
-Embeds four variable fonts as base64 woff2: the ORIGINAL upstream Nunito
-(pulled from git history so it never drifts) and the CURRENT Nunuïko build
-outputs. The result is published as a Claude artifact after each glyph
-edit — same URL each time, so it doubles as a visual changelog.
+Embeds two variable fonts as base64 woff2: the ORIGINAL upstream Nunito
+Sans (pulled from git history so it never drifts) and the CURRENT Nunuïko
+Display build. Roman only — the six edits are done for the 14 roman
+masters; italics are a pending second pass. The result is published as a
+Claude artifact (interactive proof + visual changelog).
 
 Run from the repo root:  .venv/bin/python sources/proof/make_proof.py
-Output: sources/proof/nunuiko-proof.html (gitignored; regenerate at will)
-
-Nunito Sans fork: change ORIG_COMMIT/paths to that repo's originals and
-swap the display strings in template.html.
+Output: sources/proof/nunuiko-display-proof.html (gitignored).
 """
 import base64
 import pathlib
@@ -21,13 +19,12 @@ from fontTools.ttLib.woff2 import compress
 HERE = pathlib.Path(__file__).parent
 ROOT = HERE.parent.parent
 
-# last upstream commit before the rename/edits — the pristine Nunito
-ORIG_COMMIT = "8c6a9bb9"
+# last upstream commit before the rename/edits — pristine Nunito Sans
+ORIG_COMMIT = "058bd7a"
+VF = "[YTLC,opsz,wdth,wght].ttf"
 FONTS = {
-    "%%OR%%": (ORIG_COMMIT, "fonts/variable/Nunito[wght].ttf"),
-    "%%OI%%": (ORIG_COMMIT, "fonts/variable/Nunito-Italic[wght].ttf"),
-    "%%NR%%": (None, "fonts/variable/Nunuiko[wght].ttf"),
-    "%%NI%%": (None, "fonts/variable/Nunuiko-Italic[wght].ttf"),
+    "%%OR%%": (ORIG_COMMIT, "fonts/variable/NunitoSans" + VF),
+    "%%NR%%": (None, "fonts/variable/NunuikoDisplay" + VF),
 }
 
 
@@ -50,7 +47,7 @@ def main():
     html = (HERE / "template.html").read_text()
     for token, (commit, path) in FONTS.items():
         html = html.replace(token, font_b64(commit, path))
-    out = HERE / "nunuiko-proof.html"
+    out = HERE / "nunuiko-display-proof.html"
     out.write_text(html)
     print(out, len(html) // 1024, "KB")
 

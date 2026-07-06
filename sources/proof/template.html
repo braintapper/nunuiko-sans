@@ -1,73 +1,72 @@
-<title>Nunuïko — specimen &amp; diff proof</title>
+<title>Nunuïko Display — type proof</title>
 <style>
-  @font-face { font-family: 'Nunito Orig'; src: url(data:font/woff2;base64,%%OR%%) format('woff2'); font-weight: 200 1000; font-style: normal; }
-  @font-face { font-family: 'Nunito Orig'; src: url(data:font/woff2;base64,%%OI%%) format('woff2'); font-weight: 200 1000; font-style: italic; }
+  @font-face { font-family: 'NS Orig'; src: url(data:font/woff2;base64,%%OR%%) format('woff2'); font-weight: 200 1000; font-style: normal; }
   @font-face { font-family: 'Nunuiko'; src: url(data:font/woff2;base64,%%NR%%) format('woff2'); font-weight: 200 1000; font-style: normal; }
-  @font-face { font-family: 'Nunuiko'; src: url(data:font/woff2;base64,%%NI%%) format('woff2'); font-weight: 200 1000; font-style: italic; }
 
-  /* neutral light palette, forced regardless of OS dark mode */
+  /* Deliberate single-theme "proofing sheet": the before/after overlay uses
+     multiply blending, which needs a light ground to read as ink-on-ink. */
   :root {
-    --bg: #FFFFFF;
+    --bg: #FBFBFA;
     --surface: #FFFFFF;
-    --ink: #1E1E20;
+    --ink: #1C1C1E;
     --muted: #6B6B70;
-    --line: #E4E4E7;
-    --c-orig: #4A6FA5;
-    --c-new: #C93A3F;
-    --accent: #C93A3F;
+    --line: #E6E6E4;
+    --c-orig: #3E6DA6;   /* source — cool blue */
+    --c-new: #C63A38;    /* current build — warm red */
+    --accent: #C63A38;
     --blend: multiply;
     --mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, monospace;
+    --fvs: "wght" 400, "wdth" 100, "opsz" 12, "YTLC" 500;
   }
 
   * { box-sizing: border-box; }
-  body { background: var(--bg); color: var(--ink); font-family: 'Nunuiko', sans-serif; margin: 0; color-scheme: light; }
-  .wrap { max-width: 1060px; margin: 0 auto; padding: 40px 24px 80px; }
+  body { background: var(--bg); color: var(--ink); font-family: 'Nunuiko', sans-serif;
+    margin: 0; color-scheme: light; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 44px 24px 90px; }
 
-  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
-  h1 { font-size: clamp(64px, 12vw, 128px); font-weight: 1000; line-height: 1; margin: 0 0 6px; letter-spacing: -.01em; }
-  .sub { font-size: 17px; color: var(--muted); margin: 0 0 14px; max-width: 58ch; }
-  .legend { display: flex; gap: 18px; font-family: var(--mono); font-size: 12.5px; margin: 0 0 8px; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
+  h1 { font-size: clamp(60px, 11vw, 120px); font-weight: 1000; line-height: .98; margin: 0 0 10px;
+    letter-spacing: -.015em; text-wrap: balance; font-variation-settings: "wght" 1000, "wdth" 100, "opsz" 12, "YTLC" 500; }
+  .sub { font-size: 17px; line-height: 1.5; color: var(--muted); margin: 0 0 16px; max-width: 62ch; }
+  .legend { display: flex; flex-wrap: wrap; gap: 18px; font-family: var(--mono); font-size: 12.5px; margin: 0 0 8px; }
   .legend span { display: inline-flex; align-items: center; gap: 7px; }
   .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
   .sw-orig { background: var(--c-orig); }
   .sw-new { background: var(--c-new); }
 
-  section { margin-top: 56px; }
-  h2 { font-size: 21px; font-weight: 800; margin: 0 0 4px; }
-  .note { font-size: 14.5px; color: var(--muted); margin: 0 0 18px; max-width: 68ch; }
+  section { margin-top: 58px; }
+  h2 { font-size: 21px; font-weight: 800; margin: 0 0 4px; font-variation-settings: "wght" 800, "wdth" 100, "opsz" 12, "YTLC" 500; }
+  .note { font-size: 14.5px; line-height: 1.5; color: var(--muted); margin: 0 0 18px; max-width: 70ch; }
+  .note b { color: var(--ink); font-weight: 700; }
 
-  .controls { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: end;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 16px 22px; align-items: end;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
   .ctl { display: flex; flex-direction: column; gap: 6px; }
   .ctl label { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
   .ctl output { font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 11px; color: var(--ink); }
-  .ctl-text { flex: 1 1 260px; }
+  .ctl-text { flex: 1 1 240px; }
   input[type="text"] { font: inherit; font-size: 16px; color: var(--ink); background: var(--bg);
-    border: 1px solid var(--line); border-radius: 7px; padding: 8px 12px; width: 100%; }
-  input[type="range"] { accent-color: var(--accent); width: 150px; }
-  input[type="checkbox"] { accent-color: var(--accent); width: 17px; height: 17px; }
+    border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; width: 100%; }
+  input[type="range"] { accent-color: var(--accent); width: 128px; }
   input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .lab-row { display: flex; justify-content: space-between; gap: 12px; }
   .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
   .seg button { font-family: var(--mono); font-size: 12px; padding: 8px 13px; border: 0; cursor: pointer;
     background: var(--surface); color: var(--muted); }
   .seg button + button { border-left: 1px solid var(--line); }
-  .seg button.on { background: var(--accent); color: var(--bg); }
-  .ital { flex-direction: row; align-items: center; gap: 8px; padding-bottom: 6px; }
-  .ital label { padding-top: 3px; }
+  .seg button.on { background: var(--accent); color: #fff; }
 
-  .stage { margin-top: 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+  .stage { margin-top: 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
     padding: 26px 28px; overflow-x: auto; }
   .pane-label { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; margin: 0 0 6px; }
   .pane-orig .pane-label { color: var(--c-orig); }
   .pane-new .pane-label { color: var(--c-new); }
-  .sample { line-height: 1.25; white-space: nowrap; }
-  .pane-orig .sample { font-family: 'Nunito Orig', sans-serif; }
+  .sample { line-height: 1.25; white-space: nowrap; font-variation-settings: var(--fvs); }
+  .pane-orig .sample { font-family: 'NS Orig', sans-serif; }
   .pane-new .sample { font-family: 'Nunuiko', sans-serif; }
 
   .stage.stack { display: grid; grid-template-columns: 1fr; gap: 26px; }
   .stage.overlay { position: relative; }
-  .stage.overlay .pane { position: relative; }
   .stage.overlay .pane-new { margin-top: 10px; }
   .stage.overlay.merged .pane-new { position: absolute; inset: 26px 28px; margin: 0; }
   .stage.overlay.merged .pane-new .pane-label { visibility: hidden; }
@@ -80,58 +79,70 @@
   .waterfall th.h-orig { color: var(--c-orig); }
   .waterfall th.h-new { color: var(--c-new); }
   .waterfall .sz { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; width: 46px; }
-  .waterfall .w-orig { font-family: 'Nunito Orig', sans-serif; white-space: nowrap; }
-  .waterfall .w-new { font-family: 'Nunuiko', sans-serif; white-space: nowrap; }
-  .waterfall-box { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 18px 22px; overflow-x: auto; }
+  .waterfall .w-orig { font-family: 'NS Orig', sans-serif; white-space: nowrap; font-variation-settings: var(--fvs); }
+  .waterfall .w-new { font-family: 'Nunuiko', sans-serif; white-space: nowrap; font-variation-settings: var(--fvs); }
+  .waterfall-box { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 18px 22px; overflow-x: auto; }
 
-  .focusrow { border: 1px solid var(--line); border-radius: 10px; background: var(--surface); padding: 22px 26px; overflow-x: auto; }
-  .focusrow .pane-label { margin-top: 14px; }
-  .focusrow .pane-label:first-child { margin-top: 0; }
-  .big { font-size: 104px; line-height: 1.12; white-space: nowrap; }
-  .big.orig { font-family: 'Nunito Orig', sans-serif; }
+  .focusrow { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 22px 26px; overflow-x: auto; }
+  .focusrow + .focusrow { margin-top: 18px; }
+  .focus-cap { font-family: var(--mono); font-size: 11.5px; color: var(--muted); margin: 0 0 14px; letter-spacing: .02em; }
+  .focus-cap b { color: var(--ink); font-weight: 700; }
+  .pane-label.mt { margin-top: 14px; }
+  .big { font-size: 104px; line-height: 1.12; white-space: nowrap; font-variation-settings: var(--fvs); }
+  .big.orig { font-family: 'NS Orig', sans-serif; }
   .big.new { font-family: 'Nunuiko', sans-serif; }
   .overlap { position: relative; margin-top: 18px; }
   .overlap .big { position: absolute; inset: 0; mix-blend-mode: var(--blend); }
   .overlap .big.orig { position: static; color: var(--c-orig); }
   .overlap .big.new { color: var(--c-new); }
 
-  footer { margin-top: 64px; border-top: 1px solid var(--line); padding-top: 14px;
-    font-family: var(--mono); font-size: 12px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 24px; }
+  footer { margin-top: 66px; border-top: 1px solid var(--line); padding-top: 16px;
+    font-family: var(--mono); font-size: 12px; line-height: 1.7; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 24px; }
 </style>
 
 <div class="wrap">
   <header>
-    <p class="eyebrow">Type proof · edits 01–06 — l tail · f terminal · G bowl · Q slash · J hook · K notch</p>
-    <h1>Nunuïko</h1>
-    <p class="sub">A Nunito derivative, proofed live against its source. Both columns render real
-      variable fonts — original Nunito v3.602 and the current Nunuïko build — so what you see is
-      exactly what ships.</p>
+    <p class="eyebrow">Type proof · six edits — l&nbsp;tail · f&nbsp;terminal · G&nbsp;bowl · Q&nbsp;slash · J&nbsp;hook · K&nbsp;notch</p>
+    <h1>Nunuïko Display</h1>
+    <p class="sub">The straight-terminal display cut of Nunito Sans, proofed live against its
+      source. Both columns render real four-axis variable fonts — stock <b>Nunito Sans</b> and the
+      current <b>Nunuïko Display</b> build — so what you see is what ships. This proof covers the
+      14 roman masters; italics are a pending second pass.</p>
     <div class="legend">
-      <span><i class="swatch sw-orig"></i>Nunito (original)</span>
-      <span><i class="swatch sw-new"></i>Nunuïko (current build)</span>
+      <span><i class="swatch sw-orig"></i>Nunito Sans — source</span>
+      <span><i class="swatch sw-new"></i>Nunuïko Display — current build</span>
     </div>
   </header>
 
   <section>
     <h2>Playground</h2>
-    <p class="note">Type anything. Overlay mode stacks both fonts at the same origin — divergence
-      shows as color fringing, which grows left to right as the narrower l advances accumulate.</p>
+    <p class="note">Type anything and drive all four axes. <b>Overlay</b> stacks both fonts at the
+      same origin — divergence shows as colour fringing, growing left-to-right as the shorter
+      Nunuïko&nbsp;l advances accumulate.</p>
     <div class="controls">
       <div class="ctl ctl-text">
         <label for="txt">Sample text</label>
-        <input type="text" id="txt" value="Il1 fluff — small talk will fall" spellcheck="false">
+        <input type="text" id="txt" value="Il1 fluff — Google Quiz JKk" spellcheck="false">
       </div>
       <div class="ctl">
         <div class="lab-row"><label for="size">Size</label><output id="size-out">40px</output></div>
-        <input type="range" id="size" min="8" max="120" value="40">
+        <input type="range" id="size" min="8" max="140" value="40">
       </div>
       <div class="ctl">
         <div class="lab-row"><label for="wght">Weight</label><output id="wght-out">400</output></div>
         <input type="range" id="wght" min="200" max="1000" step="10" value="400">
       </div>
-      <div class="ctl ital">
-        <input type="checkbox" id="ital">
-        <label for="ital">Italic</label>
+      <div class="ctl">
+        <div class="lab-row"><label for="wdth">Width</label><output id="wdth-out">100</output></div>
+        <input type="range" id="wdth" min="75" max="125" step="1" value="100">
+      </div>
+      <div class="ctl">
+        <div class="lab-row"><label for="opsz">Optical</label><output id="opsz-out">12</output></div>
+        <input type="range" id="opsz" min="6" max="12" step="0.5" value="12">
+      </div>
+      <div class="ctl">
+        <div class="lab-row"><label for="ytlc">YTLC</label><output id="ytlc-out">500</output></div>
+        <input type="range" id="ytlc" min="440" max="540" step="2" value="500">
       </div>
       <div class="ctl">
         <label>View</label>
@@ -143,87 +154,104 @@
     </div>
     <div class="stage stack" id="stage">
       <div class="pane pane-orig">
-        <p class="pane-label">Nunito</p>
-        <div class="sample" id="s-orig">Il1 lIl — small talk will fall</div>
+        <p class="pane-label">Nunito Sans</p>
+        <div class="sample" id="s-orig"></div>
       </div>
       <div class="pane pane-new">
-        <p class="pane-label">Nunuïko</p>
-        <div class="sample" id="s-new">Il1 lIl — small talk will fall</div>
+        <p class="pane-label">Nunuïko Display</p>
+        <div class="sample" id="s-new"></div>
       </div>
     </div>
   </section>
 
   <section>
     <h2>Waterfall — UI sizes</h2>
-    <p class="note">The range that matters for KDE font roles. The l / I / 1 triplet leads each
-      line: the tail must stay a visible disambiguator down to 9&nbsp;px.</p>
+    <p class="note">The range that matters for interface text. The <b>l / I / 1</b> triplet leads
+      each line: the shortened tail must stay a visible disambiguator down to 9&nbsp;px. Adjust the
+      axes above — the ramp follows.</p>
     <div class="waterfall-box">
       <table class="waterfall" id="wf">
-        <tr><th></th><th class="h-orig">Nunito</th><th class="h-new">Nunuïko</th></tr>
+        <tr><th></th><th class="h-orig">Nunito Sans</th><th class="h-new">Nunuïko Display</th></tr>
       </table>
     </div>
   </section>
 
   <section>
-    <h2>Glyph focus — edited glyphs and their composites</h2>
-    <p class="note">Edit 01: the l outline and everything that inherits it. Edit 02: the f
-      hook, its separately-drawn fi, and the fl ligature. Edit 03: G rebuilt on O's full
-      bowl — same bar height, same terminal. Each group ends with an overlay at the same
-      origin.</p>
+    <h2>Glyph focus — the six edits and their composites</h2>
+    <p class="note">Each row: source, current build, then an overlay at the same origin (colour
+      fringing marks the change). All rows follow the axis sliders.</p>
+
     <div class="focusrow">
-      <p class="pane-label" style="color: var(--c-orig)">Nunito</p>
+      <p class="focus-cap"><b>01 · l</b> — tail compressed to 0.6 toward the stem; still an l/I/1
+        disambiguator at UI sizes. Composites (fl, lá, ľ, ŀl, ł) inherit.</p>
+      <p class="pane-label" style="color: var(--c-orig)">Nunito Sans</p>
       <div class="big orig">l fl lá ľ ŀl ł Il1</div>
-      <p class="pane-label" style="color: var(--c-new)">Nunuïko</p>
+      <p class="pane-label mt" style="color: var(--c-new)">Nunuïko Display</p>
       <div class="big new">l fl lá ľ ŀl ł Il1</div>
       <div class="overlap">
         <div class="big orig">l fl lá ľ ŀl ł Il1</div>
         <div class="big new">l fl lá ľ ŀl ł Il1</div>
       </div>
     </div>
-    <div class="focusrow" style="margin-top: 18px">
-      <p class="pane-label" style="color: var(--c-orig)">Nunito</p>
+
+    <div class="focusrow">
+      <p class="focus-cap"><b>02 · f</b> — top terminal rotated 10° into a downturn (re-judged from
+        Nunito's 12° for the straight cut). fi is edited too; fl inherits.</p>
+      <p class="pane-label" style="color: var(--c-orig)">Nunito Sans</p>
       <div class="big orig">f fi fl ff fjord</div>
-      <p class="pane-label" style="color: var(--c-new)">Nunuïko</p>
+      <p class="pane-label mt" style="color: var(--c-new)">Nunuïko Display</p>
       <div class="big new">f fi fl ff fjord</div>
       <div class="overlap">
         <div class="big orig">f fi fl ff fjord</div>
         <div class="big new">f fi fl ff fjord</div>
       </div>
     </div>
-    <div class="focusrow" style="margin-top: 18px">
-      <p class="pane-label" style="color: var(--c-orig)">Nunito</p>
+
+    <div class="focusrow">
+      <p class="focus-cap"><b>03 · G</b> — rebuilt on O's full round bowl; same bar height, same
+        arm terminal. Corner A left crisp (matches the cut vocabulary).</p>
+      <p class="pane-label" style="color: var(--c-orig)">Nunito Sans</p>
       <div class="big orig">G GO Ğ Ģ Google</div>
-      <p class="pane-label" style="color: var(--c-new)">Nunuïko</p>
+      <p class="pane-label mt" style="color: var(--c-new)">Nunuïko Display</p>
       <div class="big new">G GO Ğ Ģ Google</div>
       <div class="overlap">
         <div class="big orig">G GO Ğ Ģ Google</div>
         <div class="big new">G GO Ğ Ģ Google</div>
       </div>
     </div>
-    <div class="focusrow" style="margin-top: 18px">
-      <p class="pane-label" style="color: var(--c-orig)">Nunito</p>
+
+    <div class="focusrow">
+      <p class="focus-cap"><b>04 · Q</b> — Jost-style straight slash with round caps, crossing the
+        bottom-right ring; counter stays open at every weight.</p>
+      <p class="pane-label" style="color: var(--c-orig)">Nunito Sans</p>
       <div class="big orig">Q QU Query IQ</div>
-      <p class="pane-label" style="color: var(--c-new)">Nunuïko</p>
+      <p class="pane-label mt" style="color: var(--c-new)">Nunuïko Display</p>
       <div class="big new">Q QU Query IQ</div>
       <div class="overlap">
         <div class="big orig">Q QU Query IQ</div>
         <div class="big new">Q QU Query IQ</div>
       </div>
     </div>
-    <div class="focusrow" style="margin-top: 18px">
-      <p class="pane-label" style="color: var(--c-orig)">Nunito</p>
+
+    <div class="focusrow">
+      <p class="focus-cap"><b>05 · J</b> — U-hook foot, widened to 0.66× U, ending in a flat cut.
+        IJ / NJ / Ĵ track the widening.</p>
+      <p class="pane-label" style="color: var(--c-orig)">Nunito Sans</p>
       <div class="big orig">J Jump IJ NJ Ĵ</div>
-      <p class="pane-label" style="color: var(--c-new)">Nunuïko</p>
+      <p class="pane-label mt" style="color: var(--c-new)">Nunuïko Display</p>
       <div class="big new">J Jump IJ NJ Ĵ</div>
       <div class="overlap">
         <div class="big orig">J Jump IJ NJ Ĵ</div>
         <div class="big new">J Jump IJ NJ Ĵ</div>
       </div>
     </div>
-    <div class="focusrow" style="margin-top: 18px">
-      <p class="pane-label" style="color: var(--c-orig)">Nunito</p>
+
+    <div class="focusrow">
+      <p class="focus-cap"><b>06 · K / k</b> — chevron opened into a notch: the leg branches off the
+        arm. Light masters catch up to the floor; heavy ones were already notched.</p>
+      <p class="pane-label" style="color: var(--c-orig)">Nunito Sans</p>
       <div class="big orig">K k ĸ Ķ Kick</div>
-      <p class="pane-label" style="color: var(--c-new)">Nunuïko</p>
+      <p class="pane-label mt" style="color: var(--c-new)">Nunuïko Display</p>
       <div class="big new">K k ĸ Ķ Kick</div>
       <div class="overlap">
         <div class="big orig">K k ĸ Ķ Kick</div>
@@ -233,28 +261,31 @@
   </section>
 
   <footer>
-    <span>braintapper/nunuiko</span>
-    <span>edit 01: l tail ×0.6 · edit 02: f terminal −12° · edit 03: G on O bowl · edit 04: Q slash @ baseline · edit 05: J hook · edit 06: K/k notch · all 6 masters</span>
-    <span>rule log: GLYPHLOG.md</span>
+    <span>Nunuïko Display — Nunito Sans derivative · 14 roman masters · axes wght / wdth / opsz / YTLC</span>
+    <span>01 l&nbsp;×0.6 · 02 f&nbsp;−10° · 03 G-on-O · 04 Q&nbsp;slash · 05 J&nbsp;hook&nbsp;.66U · 06 K/k&nbsp;notch&nbsp;.25</span>
+    <span>rule log: sources/GLYPHLOG.md</span>
   </footer>
 </div>
 
 <script>
   const $ = id => document.getElementById(id);
-  const stage = $('stage'), samples = [$('s-orig'), $('s-new')];
+  const samples = [$('s-orig'), $('s-new')];
+  const stage = $('stage');
+  const AX = ['wght', 'wdth', 'opsz', 'ytlc'];
 
   function update() {
-    const size = $('size').value, wght = $('wght').value;
+    const size = $('size').value;
     $('size-out').textContent = size + 'px';
-    $('wght-out').textContent = wght;
+    for (const a of AX) $(a + '-out').textContent = $(a).value;
+    const fvs = `"wght" ${$('wght').value}, "wdth" ${$('wdth').value}, ` +
+                `"opsz" ${$('opsz').value}, "YTLC" ${$('ytlc').value}`;
+    document.documentElement.style.setProperty('--fvs', fvs);
     for (const s of samples) {
       s.textContent = $('txt').value || ' ';
       s.style.fontSize = size + 'px';
-      s.style.fontWeight = wght;
-      s.style.fontStyle = $('ital').checked ? 'italic' : 'normal';
     }
   }
-  ['txt', 'size', 'wght', 'ital'].forEach(id => $(id).addEventListener('input', update));
+  ['txt', 'size', ...AX].forEach(id => $(id).addEventListener('input', update));
 
   $('mode').addEventListener('click', e => {
     const btn = e.target.closest('button');
@@ -263,7 +294,7 @@
     stage.className = 'stage ' + (btn.dataset.mode === 'overlay' ? 'overlay merged' : btn.dataset.mode);
   });
 
-  const wf = $('wf'), wfText = 'Il1 lIl 1l| small talk will fall — quick brown fjord';
+  const wf = $('wf'), wfText = 'Il1 lIl 1l| — Google Quiz Jump Kick fjord';
   for (const size of [9, 10, 11, 12, 14, 16, 20, 24]) {
     const tr = document.createElement('tr');
     tr.innerHTML = '<td class="sz">' + size + '</td>' +
