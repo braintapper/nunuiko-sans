@@ -2,7 +2,7 @@
 
 Embeds two variable fonts as base64 woff2: the ORIGINAL upstream Nunito
 Sans (pulled from git history so it never drifts) and the CURRENT Nunuïko
-Display build. Roman only — the six edits are done for the 14 roman
+Display build. Roman only — the four edits are done for the 14 roman
 masters; italics are a pending second pass. The result is published as a
 Claude artifact (interactive proof + visual changelog).
 

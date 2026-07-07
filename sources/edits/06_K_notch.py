@@ -20,20 +20,23 @@ invisible on the light masters — the notch face scales with the (thin)
 stroke, so a proper light notch just isn't achievable that way (the base
 font itself draws its light K as a chevron for this reason).
 
-This version prioritises a VISIBLE, clean notch: move the branch
-(nodes 5,6) out to BRANCH_FRAC of the arm run keeping the original
-notch-face height, and RAISE node2 up the stem (toward node9) so the leg's
-near-stem width stays close to its foot width — a small controlled width
-variation in exchange for a notch that actually reads. Applied as a floor
-(max with the current frac); the already-notched heavy masters are left
+This version reads as TWO SEPARATE STROKES (user requirement): move the
+branch (nodes 5,6) out to a MODERATE BRANCH_FRAC (0.18) so the leg clearly
+branches off the arm, but keep node2 (leg-lower on the stem) LOW — only a
+light RAISE (0.25) toward node9 to tidy the near-stem width. Lifting node2
+too far (an earlier attempt) merged the arm and leg into a lopsided "<";
+keeping it low keeps the arm and leg reading as two balanced strokes with
+a visible notch, in exchange for a small width variation. Applied as a
+floor (max with current frac); the already-notched heavy masters are left
 as drawn. Only nodes 2,5,6 move — 14-node structure preserved, works in
-italic (pure line geometry). Run once: python3 edits/06_K_notch.py
+italic (pure line geometry). BRANCH_FRAC / RAISE are the taste knobs.
+Run once: python3 edits/06_K_notch.py
 """
 from lib import apply_edit
 
 GLYPHS_FILE = "NunuikoDisplay.glyphs"
-BRANCH_FRAC = 0.22    # branch position, fraction of the arm run
-RAISE = 0.70          # how far to lift node2 toward the target (0..1)
+BRANCH_FRAC = 0.18    # branch position, fraction of the arm run
+RAISE = 0.25          # how far to lift node2 toward the target (0..1)
 RAISE_TARGET = 0.85   # target height, fraction from S up to node9
 
 

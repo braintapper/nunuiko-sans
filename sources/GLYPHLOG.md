@@ -513,28 +513,26 @@ k/ĸ: Bold 0.37, Heavy 0.63, Bold It 0.39, Heavy It 0.67.
         2 = leg-lower inner (on stem), 3/4 = leg foot (flat on baseline),
         5 = leg-upper inner, 6 = arm-bottom inner (crotch), 7 = arm tip,
         9 = arm-top inner (on stem).
-      - **Two dead ends:** (a) sliding the notch face out along the arm
-        pulled the arm-bottom off the stem and bulged the leg (leg-upper
-        moved out while the lower edge stayed → width blew up near the
-        stem); (b) a strictly consistent-width leg steepened about the foot
-        stays clean but is nearly INVISIBLE on the light masters — the
-        notch face scales with the (thin) stroke, and the light K is
-        proportionally WIDE (foot far from the stem), so a deep clean notch
-        drives the leg vertical. Nunito Sans itself draws its light K as a
-        chevron for exactly this reason; user confirmed (b) was too subtle.
-      - **Shipped construction (visible + clean):** move the branch
-        (nodes 5,6) out to **BRANCH_FRAC 0.22** of the arm run keeping the
-        original notch-face height, and **RAISE node2 up the stem** toward
-        node9 (0.70 of the way to 0.85·(node9−S)) so the leg's near-stem
-        width stays close to its foot width — a small, controlled width
-        variation traded for a notch that actually reads. Applied as a
-        floor (max with current frac); the already-notched heavy masters
-        (Bold 0.21→0.22, ExtraBlack 0.34 unchanged) stay ~as drawn. Only
-        nodes 2,5,6 move.
+      - **Three dead ends:** (a) sliding the notch face out with node2
+        fixed bulged the leg at frac 0.25; (b) a strictly consistent-width
+        leg steepened about the foot is clean but INVISIBLE on the light
+        masters (the notch face scales with the thin stroke — Nunito Sans
+        draws its own light K as a chevron for this reason); (c) opening the
+        notch deep AND raising node2 high to kill the bulge merged the arm
+        and leg into a lopsided **"<"** — user rejected all three.
+      - **Shipped construction (two clean strokes + visible notch):** move
+        the branch (nodes 5,6) out to a **MODERATE BRANCH_FRAC 0.18** so the
+        leg clearly branches off the arm, but keep node2 (leg-lower on the
+        stem) **LOW** — only a light **RAISE 0.25** toward 0.85·(node9−S) to
+        tidy the near-stem width. Keeping node2 low is what makes the arm
+        and leg read as two balanced strokes (raising it high was dead end
+        c). Cost: a small width variation, well under (a)'s bulge. Applied
+        as a floor; heavy masters (Bold 0.21, ExtraBlack 0.34) unchanged.
+        Only nodes 2,5,6 move.
       - kgreenlandic shares k's topology; Cyrillic Ka-cy/ka-cy left stock.
-        Verified by eye + interpolation ramp 200–1000 (clean, notch visible
-        at every weight). 14 roman masters, fontmake clean. Italics
-        deferred. NB depth/RAISE are the taste knobs if re-judged.
+        Verified by eye + ramp 200–1000 (two strokes, notch visible and
+        balanced at every weight). 14 roman masters, fontmake clean.
+        Italics deferred. BRANCH_FRAC / RAISE are the taste knobs.
 
 ---
 
