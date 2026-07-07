@@ -30,12 +30,14 @@ Lowercase j is CANCELLED (left stock).
 Run once from sources/: python3 edits/05_J_hook.py
 """
 import math
+import sys
 
 from glyphsLib import GSFont
 
 from lib import WIDTH_RE, apply_edit
 
-GLYPHS_FILE = "NunuikoDisplay.glyphs"
+# roman by default; pass the italic source as argv[1] for the italic pass
+GLYPHS_FILE = sys.argv[1] if len(sys.argv) > 1 else "NunuikoDisplay.glyphs"
 WIDTH_FRAC_OF_U = 0.66
 H_FRAC = 0.9            # terminal height, fraction of stem curve-start y
 HOOK_MAX_FRAC = 0.55    # hook weight cap, fraction of the left span

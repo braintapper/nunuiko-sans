@@ -12,11 +12,14 @@ ligature is unchanged.
 `fl.ss02` is already consistent (its `l.ss02` component was not tail-edited)
 and is left alone. Run once: python3 edits/07_fl_width.py
 """
+import sys
+
 from glyphsLib import GSFont
 
 from lib import apply_edit
 
-GLYPHS_FILE = "NunuikoDisplay.glyphs"
+# roman by default; pass the italic source as argv[1] for the italic pass
+GLYPHS_FILE = sys.argv[1] if len(sys.argv) > 1 else "NunuikoDisplay.glyphs"
 
 # l's current advance per master id (post edit 01)
 _font = GSFont(GLYPHS_FILE)

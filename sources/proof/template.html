@@ -2,6 +2,11 @@
 <style>
   @font-face { font-family: 'NS Orig'; src: url(data:font/woff2;base64,%%OR%%) format('woff2'); font-weight: 200 1000; font-style: normal; }
   @font-face { font-family: 'Nunuiko'; src: url(data:font/woff2;base64,%%NR%%) format('woff2'); font-weight: 200 1000; font-style: normal; }
+  /* italic VFs are already slanted; register them as their own upright
+     families so selecting the family renders the real italic outlines
+     (no synthetic slant). The Roman/Italic switch swaps --fam-*. */
+  @font-face { font-family: 'NS Orig It'; src: url(data:font/woff2;base64,%%OI%%) format('woff2'); font-weight: 200 1000; font-style: normal; }
+  @font-face { font-family: 'Nunuiko It'; src: url(data:font/woff2;base64,%%NI%%) format('woff2'); font-weight: 200 1000; font-style: normal; }
 
   /* Deliberate single-theme "proofing sheet": the before/after overlay uses
      multiply blending, which needs a light ground to read as ink-on-ink. */
@@ -17,7 +22,10 @@
     --blend: multiply;
     --mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, monospace;
     --fvs: "wght" 400, "wdth" 100, "opsz" 12, "YTLC" 500;
+    --fam-orig: 'NS Orig';   /* swapped by the Roman/Italic switch */
+    --fam-new: 'Nunuiko';
   }
+  :root.italic { --fam-orig: 'NS Orig It'; --fam-new: 'Nunuiko It'; }
 
   * { box-sizing: border-box; }
   body { background: var(--bg); color: var(--ink); font-family: 'Nunuiko', sans-serif;
@@ -62,8 +70,8 @@
   .pane-orig .pane-label { color: var(--c-orig); }
   .pane-new .pane-label { color: var(--c-new); }
   .sample { line-height: 1.25; white-space: nowrap; font-variation-settings: var(--fvs); }
-  .pane-orig .sample { font-family: 'NS Orig', sans-serif; }
-  .pane-new .sample { font-family: 'Nunuiko', sans-serif; }
+  .pane-orig .sample { font-family: var(--fam-orig), sans-serif; }
+  .pane-new .sample { font-family: var(--fam-new), sans-serif; }
 
   .stage.stack { display: grid; grid-template-columns: 1fr; gap: 26px; }
   .stage.overlay { position: relative; }
@@ -79,8 +87,8 @@
   .waterfall th.h-orig { color: var(--c-orig); }
   .waterfall th.h-new { color: var(--c-new); }
   .waterfall .sz { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; width: 46px; }
-  .waterfall .w-orig { font-family: 'NS Orig', sans-serif; white-space: nowrap; font-variation-settings: var(--fvs); }
-  .waterfall .w-new { font-family: 'Nunuiko', sans-serif; white-space: nowrap; font-variation-settings: var(--fvs); }
+  .waterfall .w-orig { font-family: var(--fam-orig), sans-serif; white-space: nowrap; font-variation-settings: var(--fvs); }
+  .waterfall .w-new { font-family: var(--fam-new), sans-serif; white-space: nowrap; font-variation-settings: var(--fvs); }
   .waterfall-box { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 18px 22px; overflow-x: auto; }
 
   .focusrow { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 22px 26px; overflow-x: auto; }
@@ -89,8 +97,8 @@
   .focus-cap b { color: var(--ink); font-weight: 700; }
   .pane-label.mt { margin-top: 14px; }
   .big { font-size: 104px; line-height: 1.12; white-space: nowrap; font-variation-settings: var(--fvs); }
-  .big.orig { font-family: 'NS Orig', sans-serif; }
-  .big.new { font-family: 'Nunuiko', sans-serif; }
+  .big.orig { font-family: var(--fam-orig), sans-serif; }
+  .big.new { font-family: var(--fam-new), sans-serif; }
   .overlap { position: relative; margin-top: 18px; }
   .overlap .big { position: absolute; inset: 0; mix-blend-mode: var(--blend); }
   .overlap .big.orig { position: static; color: var(--c-orig); }
@@ -106,8 +114,8 @@
     <h1>Nunuïko Display</h1>
     <p class="sub">The straight-terminal display cut of Nunito Sans, proofed live against its
       source. Both columns render real four-axis variable fonts — stock <b>Nunito Sans</b> and the
-      current <b>Nunuïko Display</b> build — so what you see is what ships. This proof covers the
-      14 roman masters; italics are a pending second pass.</p>
+      current <b>Nunuïko Display</b> build — so what you see is what ships. Use the
+      <b>Roman / Italic</b> switch to proof either script (14 roman + 13 italic masters).</p>
     <div class="legend">
       <span><i class="swatch sw-orig"></i>Nunito Sans — source</span>
       <span><i class="swatch sw-new"></i>Nunuïko Display — current build</span>
@@ -149,6 +157,13 @@
         <div class="seg" id="mode">
           <button data-mode="stack" class="on">Stacked</button>
           <button data-mode="overlay">Overlay</button>
+        </div>
+      </div>
+      <div class="ctl">
+        <label>Script</label>
+        <div class="seg" id="script">
+          <button data-script="roman" class="on">Roman</button>
+          <button data-script="italic">Italic</button>
         </div>
       </div>
     </div>
@@ -266,6 +281,14 @@
     if (!btn) return;
     for (const b of $('mode').children) b.classList.toggle('on', b === btn);
     stage.className = 'stage ' + (btn.dataset.mode === 'overlay' ? 'overlay merged' : btn.dataset.mode);
+  });
+
+  // Roman/Italic switch — swaps --fam-* on :root for the whole page
+  $('script').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    for (const b of $('script').children) b.classList.toggle('on', b === btn);
+    document.documentElement.classList.toggle('italic', btn.dataset.script === 'italic');
   });
 
   const wf = $('wf'), wfText = 'Il1 lIl 1l| — Google Quiz Jump Kick fjord';

@@ -29,10 +29,12 @@ against a round terminal). Run once from sources/:
     python3 edits/02_f_terminal.py
 """
 import math
+import sys
 
 from lib import apply_edit
 
-GLYPHS_FILE = "NunuikoDisplay.glyphs"
+# roman by default; pass the italic source as argv[1] for the italic pass
+GLYPHS_FILE = sys.argv[1] if len(sys.argv) > 1 else "NunuikoDisplay.glyphs"
 ANGLE_DEG = 10  # clockwise = downturn on the right. Re-judged by eye for
 # the straight cut: a cut terminal reads an angle ~1.3x stronger than
 # Nunito's round bulb, so 10 here matches the sibling's perceived-subtle

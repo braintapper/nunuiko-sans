@@ -29,12 +29,14 @@ overlap unions (not cancels) under nonzero fill.
 Run once from sources/: python3 edits/04_Q_slash.py
 """
 import math
+import sys
 
 from glyphsLib import GSFont
 
 from lib import apply_edit
 
-GLYPHS_FILE = "NunuikoDisplay.glyphs"
+# roman by default; pass the italic source as argv[1] for the italic pass
+GLYPHS_FILE = sys.argv[1] if len(sys.argv) > 1 else "NunuikoDisplay.glyphs"
 ANGLE_DEG = 45          # slash angle below horizontal, upright masters
 ITALIC_SHEAR = math.tan(math.radians(9))
 K_IN_FRAC = 0.35        # inner ink tip: fraction of counter radius past the ring

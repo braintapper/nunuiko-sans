@@ -33,7 +33,15 @@ Design rationale lives in `fonts.md`; this file is the engineering log.
 
 ## Edit order (easiest first)
 
-l → f → J → Q → G → K/k
+l → f → J → Q → G → K/k → fl width (metrics fix)
+
+**G, K, k reverted to stock (2026-07-07, user decision).** Edits 03/03b
+(G) and 06 (K/k) were backed out — the glyph blocks for G, K, k,
+kgreenlandic were restored from the pre-edit baseline (commit `638e704`,
+unmodified Nunito Sans geometry). The scripts and their log entries below
+are kept for reference in case the work is revisited. Composites (Gbreve…,
+Kcommaaccent…) reverted automatically via their components. Active edits:
+**01 l · 02 f · 04 Q · 05 J · 07 fl width.**
 
 ---
 
@@ -533,6 +541,54 @@ k/ĸ: Bold 0.37, Heavy 0.63, Bold It 0.39, Heavy It 0.67.
         Verified by eye + ramp 200–1000 (two strokes, notch visible and
         balanced at every weight). 14 roman masters, fontmake clean.
         Italics deferred. BRANCH_FRAC / RAISE are the taste knobs.
+
+---
+
+## 7. fl — trailing advance fix after the l tail edit ✅ (2026-07-07)
+
+**Intent:** remove extra space *before the next character* on `fl` / `ffl`
+(user-reported). `fl` is a composite (`f` + `l` components) whose advance
+was authored as `l_offset + l's ORIGINAL advance`. Edit 01 shortened `l`
+and shrank its advance, but the ligature width was never updated — so
+every `fl` carried the l-tail retreat (29–71 units) as trailing space.
+
+**Related glyphs:** `ffl` has **no glyph of its own** — it shapes to
+`f` + `fl` (no `ff`/`ffl`/`ffi` in the font), so fixing `fl` fixes it too.
+`fl.ss02` (= `f` + `l.ss02`) is **already correct**: `l.ss02` is a separate
+stylistic alternate that was NOT tail-edited, so its width still matches —
+left alone. `fi` is drawn separately (not an `l` composite) — unaffected.
+
+**Script:** `sources/edits/07_fl_width.py`.
+
+### Operation / rule
+
+Per master, set `fl.width = l_offset + l's CURRENT advance` (round to int).
+This subtracts exactly the l-tail retreat, so `l`'s right sidebearing
+*inside* the ligature is unchanged — only the surplus trailing advance is
+removed. Metrics only; no outline/component change. Applied to all 14 roman
+masters (unchanged masters would be skipped, but all 14 needed it).
+
+### Per-master (width old → new / removed)
+
+| Master | fl width | removed |
+|---|---|---|
+| 12pt ExtraLight | 581→525 | 56 |
+| 12pt Bold | 683→635 | 48 |
+| 12pt ExtraBlack | 787→748 | 39 |
+| 12pt Cond ExtraLight | 500→455 | 45 |
+| 12pt Cond ExtraBlack | 680→651 | 29 |
+| 12pt Exp ExtraLight | 702→631 | 71 |
+| 12pt Exp ExtraBlack | 943→891 | 52 |
+| 6pt ExtraLight | 712→655 | 57 |
+| 6pt Bold | 803→750 | 53 |
+| 6pt ExtraBlack | 892→842 | 50 |
+| 12pt XL/XBlk YTLC Min/Max | = 12pt base | |
+
+### Compatibility check
+- [x] All 14 masters consistent (`fl.width == l_offset + l.width`); fontmake
+      interpolation clean; VF default-instance `fl` advance 581→525.
+- [x] `fl.ss02` left stock (already consistent); `fi` unaffected.
+- ☐ **Italics deferred** (same as the outline edits).
 
 ---
 
