@@ -33,8 +33,8 @@
   .wrap { max-width: 1080px; margin: 0 auto; padding: 44px 24px 90px; }
 
   .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 12px; }
-  h1 { font-size: clamp(60px, 11vw, 120px); font-weight: 1000; line-height: .98; margin: 0 0 10px;
-    letter-spacing: -.015em; text-wrap: balance; font-variation-settings: "wght" 1000, "wdth" 100, "opsz" 12, "YTLC" 500; }
+  h1 { font-size: clamp(60px, 11vw, 120px); font-weight: 800; line-height: .98; margin: 0 0 10px;
+    letter-spacing: -.015em; text-wrap: balance; font-variation-settings: "wght" 800, "wdth" 100, "opsz" 12, "YTLC" 500; }
   .sub { font-size: 17px; line-height: 1.5; color: var(--muted); margin: 0 0 16px; max-width: 62ch; }
   .legend { display: flex; flex-wrap: wrap; gap: 18px; font-family: var(--mono); font-size: 12.5px; margin: 0 0 8px; }
   .legend span { display: inline-flex; align-items: center; gap: 7px; }
@@ -69,7 +69,7 @@
   .pane-label { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; margin: 0 0 6px; }
   .pane-orig .pane-label { color: var(--c-orig); }
   .pane-new .pane-label { color: var(--c-new); }
-  .sample { line-height: 1.25; white-space: nowrap; font-variation-settings: var(--fvs); }
+  .sample { line-height: 1.25; white-space: normal; overflow-wrap: anywhere; font-variation-settings: var(--fvs); }
   .pane-orig .sample { font-family: var(--fam-orig), sans-serif; }
   .pane-new .sample { font-family: var(--fam-new), sans-serif; }
 
@@ -81,15 +81,17 @@
   .stage.overlay .pane-orig .sample { color: var(--c-orig); mix-blend-mode: var(--blend); }
   .stage.overlay .pane-new .sample { color: var(--c-new); mix-blend-mode: var(--blend); }
 
-  table.waterfall { border-collapse: collapse; width: 100%; }
-  .waterfall td, .waterfall th { padding: 7px 14px 7px 0; text-align: left; vertical-align: baseline; }
-  .waterfall th { font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 400; border-bottom: 1px solid var(--line); padding-bottom: 9px; }
-  .waterfall th.h-orig { color: var(--c-orig); }
-  .waterfall th.h-new { color: var(--c-new); }
-  .waterfall .sz { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; width: 46px; }
-  .waterfall .w-orig { font-family: var(--fam-orig), sans-serif; white-space: nowrap; font-variation-settings: var(--fvs); }
-  .waterfall .w-new { font-family: var(--fam-new), sans-serif; white-space: nowrap; font-variation-settings: var(--fvs); }
-  .waterfall-box { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 18px 22px; overflow-x: auto; }
+  .waterfall-box { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 4px 22px 12px; overflow-x: auto; }
+  .wf-key { display: flex; gap: 20px; font-family: var(--mono); font-size: 11.5px; padding: 13px 0 3px; }
+  .wf-key span { display: inline-flex; align-items: center; gap: 7px; }
+  .wf-row { padding: 13px 0; border-top: 1px solid var(--line); }
+  .wf-sz { font-family: var(--mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; margin: 0 0 5px; }
+  /* Nunito Sans above, Nunuïko Display directly below at each size — colour spine
+     labels each line so the before/after sits close enough to compare. */
+  .wf-line { white-space: nowrap; border-left: 3px solid transparent; padding-left: 12px; }
+  .wf-line + .wf-line { margin-top: 3px; }
+  .wf-line.w-orig { border-left-color: var(--c-orig); font-family: var(--fam-orig), sans-serif; font-variation-settings: var(--fvs); }
+  .wf-line.w-new { border-left-color: var(--c-new); font-family: var(--fam-new), sans-serif; font-variation-settings: var(--fvs); }
 
   .focusrow { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 22px 26px; overflow-x: auto; }
   .focusrow + .focusrow { margin-top: 18px; }
@@ -103,9 +105,6 @@
   .overlap .big { position: absolute; inset: 0; mix-blend-mode: var(--blend); }
   .overlap .big.orig { position: static; color: var(--c-orig); }
   .overlap .big.new { color: var(--c-new); }
-
-  footer { margin-top: 66px; border-top: 1px solid var(--line); padding-top: 16px;
-    font-family: var(--mono); font-size: 12px; line-height: 1.7; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 24px; }
 </style>
 
 <div class="wrap">
@@ -184,10 +183,11 @@
     <p class="note">The range that matters for interface text. The <b>l / I / 1</b> triplet leads
       each line: the shortened tail must stay a visible disambiguator down to 9&nbsp;px. Adjust the
       axes above — the ramp follows.</p>
-    <div class="waterfall-box">
-      <table class="waterfall" id="wf">
-        <tr><th></th><th class="h-orig">Nunito Sans</th><th class="h-new">Nunuïko Display</th></tr>
-      </table>
+    <div class="waterfall-box" id="wf">
+      <div class="wf-key">
+        <span><i class="swatch sw-orig"></i>Nunito Sans</span>
+        <span><i class="swatch sw-new"></i>Nunuïko Display</span>
+      </div>
     </div>
   </section>
 
@@ -248,12 +248,6 @@
       </div>
     </div>
   </section>
-
-  <footer>
-    <span>Nunuïko Display — Nunito Sans derivative · 14 roman masters · axes wght / wdth / opsz / YTLC</span>
-    <span>01 l&nbsp;×0.6 · 02 f&nbsp;−10° · 04 Q&nbsp;slash · 05 J&nbsp;hook&nbsp;.66U</span>
-    <span>rule log: sources/GLYPHLOG.md</span>
-  </footer>
 </div>
 
 <script>
@@ -292,12 +286,13 @@
   });
 
   const wf = $('wf'), wfText = 'Il1 lIl 1l| — Google Quiz Jump Kick fjord';
-  for (const size of [9, 10, 11, 12, 14, 16, 20, 24]) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = '<td class="sz">' + size + '</td>' +
-      '<td class="w-orig" style="font-size:' + size + 'px">' + wfText + '</td>' +
-      '<td class="w-new" style="font-size:' + size + 'px">' + wfText + '</td>';
-    wf.appendChild(tr);
+  for (const size of [9, 10, 11, 12, 14, 16, 20, 24, 36, 48, 72]) {
+    const row = document.createElement('div');
+    row.className = 'wf-row';
+    row.innerHTML = '<div class="wf-sz">' + size + 'px</div>' +
+      '<div class="wf-line w-orig" style="font-size:' + size + 'px">' + wfText + '</div>' +
+      '<div class="wf-line w-new" style="font-size:' + size + 'px">' + wfText + '</div>';
+    wf.appendChild(row);
   }
   update();
 </script>

@@ -449273,7 +449273,7 @@ key = copyrights;
 values = (
 {
 language = dflt;
-value = "Copyright 2026 The Nunuiko Display Project Authors. Copyright 2016 The Nunito Sans Project Authors (https://github.com/Fonthausen/NunitoSans)";
+value = "Copyright 2026 Steven Ng (https://github.com/braintapper/nunuiko-sans), with Reserved Font Name \"Nunuiko\". Nunuiko Display is derived from Nunito Sans: Copyright 2016 The Nunito Sans Project Authors (https://github.com/Fonthausen/NunitoSans)";
 }
 );
 },
