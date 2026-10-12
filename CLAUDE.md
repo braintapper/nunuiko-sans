@@ -32,3 +32,20 @@ Watch out for edits written with **hand-picked coordinates copied from a
 single-master SFD** (e.g. edit 07's crotch collapse used literal ExtraLight
 points). Those don't transfer to the slant and must be reformulated as a
 construction before they can auto-apply to italics.
+
+## Workspace
+
+This repo is one of several sibling projects in the owner's development workspace (one folder per repo, side by side). The workspace map, with every project and how they depend on each other, is in `../CLAUDE.md`. Read it when a task reaches outside this repo.
+
+**Other projects depend on this repo.** They **copy** the built font files out of it into their
+own repos (web apps into their `public/fonts/` or `static/fonts/`, the ESPHome panels into
+`esphome/fonts/`), and one reads a copy installed on the system under `/usr/local/share/fonts/`.
+Nothing references this folder by path. The current list of consumers is in `../CLAUDE.md` under
+"Cross-project dependencies".
+
+- A rebuilt font does not reach any consumer until the files are copied again. When a release
+  changes file names, family names or metrics, say so, since consumers declare the family by name
+  in `@font-face` and size text against the current metrics.
+- The sister family is the sibling repo `../nunuiko`. This repo is `nunuiko-sans`, but the fonts it builds are named Nunuiko Display, and consumers refer to them by that name.
+
+Do not edit a sibling repo from a session in this project without asking the owner first.
