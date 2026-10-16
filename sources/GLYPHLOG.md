@@ -456,7 +456,7 @@ it reads as the bar tucking into the bowl. **Replay order: 03 then 03b.**
 
 ---
 
-## 6. K / k — notched joint, not a chevron ✅ (2026-07-06, done 6th)
+## 6. K / k — notched joint, not a chevron ❌ REVERTED to stock (2026-07-07, in `613e862`; superseded by edit 9)
 
 **Intent:** Nunito's K is single-junction (arm and leg meet the stem at one
 point — a chevron). Change to a **notched joint**: arm meets the stem, leg
@@ -661,6 +661,258 @@ carries on 6pt ExtraLight doesn't export, so it's skipped.
 
 Edit 7's note that "`ffl` has no glyph of its own" no longer holds: ffl
 now shapes to `f_f_l`, whose second component is the width-fixed `fl`.
+
+---
+
+## 9. K / k — the leg grows out of the arm (Proxima Nova style) ◐ (2026-10-16)
+
+**Intent (user):** make K's diagonals work like Proxima Nova's, with the
+bottom stroke coming out of the top stroke. The starting point is stock
+Nunito Sans (edit 6 was reverted). Unlike edit 6, the leg is detached from
+the stem completely: both of its edges end on the underside of the arm, so
+the open space below the arm reaches up to the arm's underside.
+
+**Script:** `sources/edits/09_K_leg_from_arm.py` (K, k, kgreenlandic), run
+once per source; `--dry-run` prints the numbers and `--gap=` tries another
+value. Kcommaaccent / kcommaaccent are composites and follow automatically.
+Cyrillic Ka-cy / ka-cy are left stock.
+
+### Rule (per master; line geometry, so it holds on the italic masters)
+
+14-node all-straight path. Landmarks: 0→1 stem right edge, 2→3 leg lower
+edge, 3→4 foot on the baseline, 4→5 leg upper edge, 6→7 arm bottom
+(7 = tip). Nodes 0 and 7–13 don't move.
+
+- **S** = the stem's right edge (0–1) ∩ the arm's bottom line (6–7).
+- The leg keeps its original perpendicular width `w` and the midpoint of
+  its foot.
+- Its centreline runs from the foot midpoint to a point on the arm, solved
+  by bisection so that the leg's **lower edge meets the arm at GAP_FRAC =
+  0.15** of the way from S to the arm tip. A fixed fraction keeps the
+  stem-to-leg gap similar at every weight. Gaps (12pt, units along the arm):
+
+  | | ExtraLight | Bold | ExtraBlack |
+  |---|---|---|---|
+  | K | 86 | 99 | 114 |
+  | k | 63 | 76 | 95 |
+
+  Italic gaps run 8–13 units larger.
+- 1 = S; 2 and 5 = the leg edges ∩ the arm; 3 and 4 = the leg edges ∩ the
+  baseline; 6 = the midpoint of 5 and 7, on the arm, which keeps the
+  14-node structure.
+- The feet move by under 10 units, so advance widths are unchanged.
+  Exception: heavy k, where the steeper leg widens the foot by up to 26
+  units each way (above 700).
+
+### Checks
+- [x] All 14 roman and 13 italic masters; build clean
+- [x] Proof gains a K / k row (K k Kick kayak Ķ ķ ĸ)
+- [ ] Visual check (user): gap size (GAP_FRAC), leg angle
+
+---
+
+## 10. Round dots — every square dot becomes a circle ◐ (2026-10-16)
+
+**Intent (user):** make the dots (umlauts, i, j, exclamation marks and
+so on) circles instead of squares.
+
+**Script:** `sources/edits/10_round_dots.py`, run once per source;
+`--dry-run` lists what it would change.
+
+**Which contours:** a path counts as a dot when, in **every** master, it
+has 4 line nodes forming a rectangle (upright) or a parallelogram at the
+italic angle (italic), with equal top and bottom widths and an aspect of
+0.6–1.7. That leaves out acute and grave strokes (other slants) and the
+ff bridge (unequal edges). Both sources find the same **50 dot contours in
+36 glyphs:**
+
+- **Letters:** i, j, fi
+- **Punctuation:** period, colon, semicolon, exclam / exclamdown,
+  question / questiondown, periodcentered (+ .loclCAT)
+- **Symbols:** bulletoperator, commercialMinusSign, divide
+- **Combining marks:** dieresiscomb, dotaccentcomb (+ .i), dotbelowcomb,
+  dieresisbelowcomb, plus the .case forms and every stacked-accent combo
+  holding a dot
+
+Everything else (ä, ï, ż, ŀ, ellipsis, ij, İ, ǘ and so on) is built from
+components and follows.
+
+**Size and shape:**
+- The circle's area equals that of a square of side √(w·h), so
+  d = 2√(w·h/π) ≈ **1.128×** the side: the usual optical correction, so a
+  round dot doesn't read smaller than the square it replaces.
+- d is capped at 1.128× the height, so the squashed dots in heavy stacked
+  accents (up to 190×130) grow upward no more than a square dot does.
+- The circle is centred on the old dot. On the baseline it overshoots by
+  about 4 units at ExtraLight, as round shapes should.
+- In the italic the dots stay true circles; they aren't slanted.
+
+**Compatibility:** each circle runs in the same direction as the rectangle
+it replaces and starts at its bottom point in every master: 12 nodes
+(4 smooth curves). Only master layers are written; none of these glyphs has
+brace layers.
+
+### Checks
+- [x] 14 roman and 13 italic masters; build clean; a re-run finds 0 square
+      dots
+- [x] Proof gains a dots row (i j ä Ö ż ŀ ! ? ¡ ¿ . : ; … · ÷ ǘ ṡ)
+- [ ] Visual check (user): dot size, and spacing around ! ? . : now that
+      the dots are round
+
+---
+
+## 11. a — rounder bowl arching down into the stem ◐ (2026-10-16)
+
+**Intent (user):** a more "bulbous" a, like Proxima Nova's. Stock Nunito
+Sans's bowl has a flat top: the outer edge and the counter top both run
+level into the stem, leaving a square inside corner. The bowl's top should
+arch and come **down** into the stem instead, the way this font's own d
+bowl meets its stem.
+
+**Script:** `sources/edits/11_a_round_bowl.py`, run once per source. Knobs:
+`INNER_DROP` 0.40, `OUTER_DROP` 0.22, `TILT` 15°.
+
+### Rule (per master)
+
+The rule works in unslanted space (x − y·tan(italic angle)), so it holds
+on the italic masters. In every master the stock a is 39 nodes with one
+type pattern (asserted). The script changes only 20–21 and 27–34, and adds
+four off-curves, making 43 nodes.
+
+- **Peaks:** the counter top (29) and the bowl top (32) move over their
+  bottom extremes (23, 38) and keep their heights.
+- **Left quarters** (26→29 counter, 35→32 bowl): handle fractions come from
+  the same master's **o** (about 0.6), so the bowl gets the family's
+  roundness. The italic o is a true italic oval, skewed even unslanted, so
+  italic masters borrow the matching upright master's o.
+- **Arches into the stem:** 29→30 and 31→32 become curves that leave the
+  peak level and come down to junctions inside the stem:
+  - inner (30) at peak − INNER_DROP × counter height
+  - outer (31) at peak − OUTER_DROP × bowl height
+
+  They meet the stem 15° off vertical, so the join reads as a crotch, as in
+  d. At 12pt ExtraLight, the counter's top-right meets the stem at 155
+  (from 238) and the bowl's at 213 (from 275).
+- **Node 20:** where the stem edge turns into the counter bottom, it drops
+  to the inner junction if it sat above it, with handle 21 scaled to match.
+
+**Taller bowl (user, same day): `BOWL_RISE` 0.10.** Before the construction
+runs, the bowl is stretched 10% taller. Its top rises by 0.10 × the stock
+bowl height (ExtraLight 275 → 303, Bold 290 → 320); the bottom stays on the
+baseline. Points at or below the counter bottom don't move, points at or
+above the counter top rise fully, and those between rise in proportion
+(unslanted), so the top and bottom strokes keep their thickness. The arches
+are then built on the taller bowl, with junctions at ExtraLight 172 inner
+and 235 outer.
+
+The opening under the a's top arch shrinks:
+
+| Masters | Opening (units) |
+|---|---|
+| ExtraLight | 131–170 |
+| Bold | 66–85 |
+| ExtraBlack | 15–39 (tight, above 700) |
+
+The composites (á ä ą …) follow. `a.ss01` (single-storey) is untouched.
+
+### Checks
+- [x] 14 roman and 13 italic masters; build clean
+- [x] Proof gains an a row (a aa ao ad á ä ą banana)
+- [ ] Visual check (user): bowl roundness, how low the top meets the stem
+      (INNER_DROP / OUTER_DROP), crotch angle (TILT)
+
+---
+
+## 12. 1 — no foot ◐ (2026-10-16)
+
+**Intent (user):** remove the bottom horizontal stroke from the 1.
+
+**Script:** `sources/edits/12_one_footless.py`, run once per source.
+
+- **Swap with the stock alternate.** Nunito Sans already draws a footless 1
+  as a stylistic alternate: `one.ss01` and `one.tosf.ss01`, recentred in
+  the 600 tabular width. The script swaps outlines, `one` ↔ `one.ss01` and
+  `one.tosf` ↔ `one.tosf.ss01`. The footless 1 becomes the default, and
+  ss01 now gives the footed 1. (ss01 also switches a to single-storey.)
+- **`one.dnom` by rule.** It has no alternate, and `one.numr`, ¹, ₁, ½ and
+  ¼ are built from it. Nodes 0, 1, 10 and 11 (the foot ends) are dropped.
+  The stem edges (lines 3→2 and 8→9, which follow the slant in the italic)
+  are extended to the baseline, giving 12 → 8 nodes. The glyph is then
+  centred like the others (below).
+- **Centring (user: "spacing around the 1 seems unbalanced").** The stock
+  footless alternates sit off-centre with more room on the right:
+
+  | 12pt glyph | left / right before | after |
+  |---|---|---|
+  | one, ExtraLight | 165 / 218 | 192 / 192 |
+  | one, Bold | 104 / 170 | 137 / 137 |
+  | one.tosf, ExtraLight | 58 / 331 | 194 / 194 |
+
+  After the swap, `one`, `one.tosf` and the footless `one.dnom` are each
+  shifted so the left and right sidebearings are equal, measured
+  unslanted. Widths are unchanged because the figures are tabular (600).
+  The footed 1 in ss01 keeps its stock spacing.
+- **Kerning:** no kerning or groups depend on the 1's shape (one is
+  ungrouped; the only pair is fraction → oneinferior).
+
+### Checks
+- [x] 14 roman and 13 italic masters; build clean
+- [x] Proof gains a 1 row (1 11 2024 Il1 ¹ ₁ ½ ¼)
+- [ ] Visual check (user), especially the fraction / superscript 1, and
+      whether a tabular 1 still looks too loose (proportional figures
+      would be a separate change)
+
+---
+
+## 13. 1 — proportional by default, footed tabular 1 under tnum ◐ (2026-10-16)
+
+**Intent (user):** even centred, the footless 1 in its 600 tabular advance
+left too much space on both sides in typed numbers (2011, 1,111). Then:
+"for the tabular 1 … use the stock 1 with the bottom stroke, since it
+provides better optical balance".
+
+**Script:** `sources/edits/13_one_proportional.py`, run once per source,
+after edit 12.
+
+### What it does
+
+**`one`, `one.tosf`: proportional.** The outline is shifted and the advance
+narrowed, measured unslanted:
+- RSB = I's sidebearing in the same master (the 1's right side is a
+  straight stem)
+- LSB = `LSB_FRAC` 0.75 × that (the flag leaves open space under it)
+
+| 12pt | sidebearings | width |
+|---|---|---|
+| ExtraLight | 72 / 96 | 600 → 384 |
+| Bold | 57 / 76 | 600 → 460 |
+
+The oldstyle 1 lands close by: 380 at ExtraLight, 442 at Bold.
+
+**`one.tf`, `one.tosf.tf`: new.** Each is a single component of the
+**stock footed 1** (`one.ss01` / `one.tosf.ss01` since edit 12's swap),
+600 wide.
+
+**Features:**
+- New `tnum`, placed right after `onum` so oldstyle + tabular chains:
+  `sub one by one.tf; sub one.tosf by one.tosf.tf;`
+- `ss01` gains `sub one.tf by one.ss01; sub one.tosf.tf by one.tosf.ss01;`
+  so ss01 with tnum still gives the footed 1.
+
+The other figures are already tabular, so only the 1 needs a .tf form.
+Fraction, superscript and subscript figures (one.dnom and friends) stay
+tabular at 380. Edit 12's centring of the default 1 is overridden here,
+but its dnom foot removal and centring still apply.
+
+**Replay check:** restoring the stock 1 glyphs and running 12 then 13
+reproduces both sources byte for byte.
+
+### Checks
+- [x] Shaping, roman and italic VF ("2011"): default one 384; tnum → one.tf
+      600; onum+tnum → one.tosf.tf 600
+- [x] Build clean; proof 1 row adds 2011 and 1,111, plus a tnum line
+- [ ] Visual check (user): proportional 1 spacing (LSB_FRAC, the I
+      sidebearing basis)
 
 ---
 
