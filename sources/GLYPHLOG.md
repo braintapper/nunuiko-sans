@@ -45,7 +45,7 @@ Kcommaaccent…) reverted automatically via their components. Active edits:
 
 ---
 
-## 1. l (lowercase L) — shorter tail ✅ (2026-07-06)
+## 1. l (lowercase L) — shorter tail ✅ (2026-07-06; since edit 14 this is the ss02 alternate)
 
 **Intent:** reduce the foot/tail. ⚠️ The tail is Nunito's main
 `l` / `I` / `1` disambiguator — shorten, don't remove; test `Il1` adjacent
@@ -913,6 +913,50 @@ reproduces both sources byte for byte.
 - [x] Build clean; proof 1 row adds 2011 and 1,111, plus a tnum line
 - [ ] Visual check (user): proportional 1 spacing (LSB_FRAC, the I
       sidebearing basis)
+
+---
+
+## 14. l — plain stem like I by default; the tailed l moves to ss02 ◐ (2026-10-16)
+
+**Intent (user):** "for nunuiko display in particular i'm leaning towards
+not disambiguating the lower case l and making it look like the capital I
+- nunuiko is the ui font, and it makes sense to keep it there". The
+sister family Nunuïko keeps its tailed l.
+
+**Script:** `sources/edits/14_plain_l_default.py`, run once per source.
+
+Nunito Sans already has the plain l: `l.ss02` is a 4-node stem with the
+same outline as I (85–127 × 0–705 at 12pt ExtraLight). Every l-based glyph
+has a complete `.ss02` twin built on it. So the pairs **swap names**, and
+the outlines, widths, anchors and kerning groups travel with their shapes.
+The pairs are l, lacute, lcaron, lcommaaccent, ldot, ldotbelow, lj,
+llinebelow, lslash, fl and f_f_l, each with its `.ss02`.
+
+**Renamed** wherever a name points at a shape:
+- glyphname lines
+- component refs (palochka-cy keeps pointing at the plain stem)
+- the direct kerning pairs on llinebelow and lslash, which belong to the
+  tailed shapes
+- dlig's `sub f l by fl.ss02`, which meant the plain fl and now reads
+  `sub f l by fl`
+
+**Unicode values** move to the new default glyphs. Insert them right after
+the glyphname line: a layer can carry its own userData, and an early
+version that anchored on `userData` lost ł's U+0142.
+
+**Feature code left as is** (liga, ss02, ccmp, locl): by name, l is now the
+plain default and ss02 gives the tailed one.
+
+**Edits 01 and 07:** the l tail (01) and the fl width fix (07) now shape the
+ss02 alternates.
+
+### Checks
+- [x] Shapes moved intact (every master, every pair); unicodes only on the
+      defaults; glyph count unchanged (1124)
+- [x] Shaping, roman and italic VF: Il1 → I l one; ffl → f_f_l (plain);
+      ss02 → f_f_l.ss02 / fl.ss02 / lslash.ss02; dlig → fl
+- [x] Build clean; proof l row recaptioned, plus an ss02 line
+- [ ] Visual check (user)
 
 ---
 
