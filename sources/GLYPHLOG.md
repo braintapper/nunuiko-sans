@@ -592,6 +592,78 @@ masters (unchanged masters would be skipped, but all 14 needed it).
 
 ---
 
+## 8. ff / ffi / ffl — ligatures with a joined crossbar ✅ (2026-10-16)
+
+**Intent (user-reported):** a "teeny tiny gap" between the f's in "ff".
+Nunito Sans has no ff ligature. "ff" is two f's pulled together by the f–f
+kern, and their square-ended crossbars don't meet at the light end. Bar gap
+per master (negative = overlap):
+
+| Master | gap |
+|---|---|
+| 12pt ExtraLight (and YTLC Min/Max) | 11 |
+| 12pt Bold | −11 |
+| 12pt ExtraBlack | −30 |
+| 12pt Condensed ExtraLight / ExtraBlack | 21 / −22 |
+| 12pt Expanded ExtraLight / ExtraBlack | 7 / −32 |
+| 6pt ExtraLight / Bold / ExtraBlack | 55 / 24.7 / −5 |
+
+The italic masters show the same gaps, except Bold It −8 and ExtraBlack It
+−26. At Regular the gap comes to about 2 units: the tiny gap.
+
+**Script:** `sources/edits/08_ff_ligatures.py`, run once per source (roman,
+then `NunuikoDisplay-Italic.glyphs`). It refuses to run if the glyphs exist.
+Sister edit: Nunuïko's edit 8 (round bar ends there, so its bridge runs cap
+to cap).
+
+### Rule (per master)
+
+- `offset = width(f) + kern(@MMK_L_f, @MMK_R_f)` (where the kerned second f
+  sits).
+- Each glyph is a **bridge** path, plus a component `f` at 0, plus the
+  second glyph as a component at `offset`.
+- **Bridge:** a quad over the bar band, from the first f's stem right edge
+  (f nodes 1 bottom, 4 top) to the second f's stem left edge (f nodes 20
+  bottom, 17 top, + offset). Going stem to stem keeps it the right way
+  round whether the bars gap or overlap in that master, so the union is one
+  flat bar everywhere.
+- `width = offset + width(second)`. Carets go at `offset` and at
+  `offset + the second glyph's caret_1`. kernLeft is `f`; kernRight comes
+  from the second glyph.
+
+| Glyph | Second | Unicode | kernRight |
+|---|---|---|---|
+| f_f | f | FB00 | f |
+| f_f_i | fi | FB03 | i |
+| f_f_l | fl | FB04 | ltail |
+| f_f_l.ss02 | fl.ss02 | — | l |
+
+**`fi` is drawn, not built from `f`.** Its f part has two extra nodes, so
+f's nodes 17–20 are fi's 19–22, and for `f_f_i` the bridge ends on fi's own
+points. That matters in **ExtraBlack YTLC Max** (roman and italic), where
+stock fi's bar sits 5 units higher than f's (397–549 against 392–544). The
+bridge ramps across the gap there instead of stepping. Plain f + fi already
+had that 5-unit step before this edit.
+
+**Features:** liga gains `sub f f i by f_f_i; sub f f l by f_f_l; sub f f
+by f_f;` (ahead of fi/fl), and ss02 gains `sub f_f_l by f_f_l.ss02;`, in
+both sources. Both features are `automatic`, so Glyphs.app would generate
+the same lines.
+
+Only master layers are written. The unnamed backup layer every glyph
+carries on 6pt ExtraLight doesn't export, so it's skipped.
+
+### Checks
+- [x] Roman VF, italic VF and static Regular: offer→f_f, office→f_f_i,
+      waffle→f_f_l, waffle+ss02→f_f_l.ss02, U+FB00→f_f; liga off → f f
+- [x] Build clean (all statics + both VFs); proof f row shows `ff ffi ffl`
+- [ ] Visual check of the joined bar (user)
+
+Edit 7's note that "`ffl` has no glyph of its own" no longer holds: ffl
+now shapes to `f_f_l`, whose second component is the width-fixed `fl`.
+
+---
+
 ## Replay procedure (Nunito Sans → Nunuïko Display)
 
 1. For each glyph above, read the **Operation / rule** — apply the rule to
